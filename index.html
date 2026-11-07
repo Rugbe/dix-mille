@@ -1,0 +1,892 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>10 000</title>
+<meta name="theme-color" content="#1E5B40">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="10 000">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="favicon-64.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#E6ECE5; --surface:#FFFFFF; --ink:#14211A; --muted:#58675E; --line:#C9D4CC;
+  --felt:#1E5B40; --felt-2:#123D2A; --felt-ink:#EAF4ED; --felt-muted:#A6C7B3;
+  --gold:#F2C230; --gold-deep:#B88A0E; --gold-face:#FFE59A; --bust:#B8352D;
+  --die:#FBFAF4; --pip:#1A1E29; --btn:#14211A; --btn-ink:#FFFFFF;
+  color-scheme:light; box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#0D1511; --surface:#16201B; --ink:#E3ECE6; --muted:#8FA096; --line:#283730;
+    --felt:#1A4F38; --felt-2:#0F3123; --btn:#E3ECE6; --btn-ink:#0D1511; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0D1511; --surface:#16201B; --ink:#E3ECE6; --muted:#8FA096; --line:#283730;
+  --felt:#1A4F38; --felt-2:#0F3123; --btn:#E3ECE6; --btn-ink:#0D1511; color-scheme:dark;
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0; background:var(--bg); color:var(--ink);
+  font-family:"Bricolage Grotesque",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  font-variant-numeric:tabular-nums; line-height:1.4; -webkit-tap-highlight-color:transparent}
+main{max-width:560px; margin:0 auto; padding:10px 14px 130px}
+button{font:inherit; cursor:pointer; border:0; border-radius:14px; padding:12px 16px; font-weight:600; color:inherit; background:none}
+button:focus-visible,input:focus-visible{outline:3px solid var(--gold); outline-offset:2px}
+button:disabled{opacity:.4; cursor:not-allowed}
+.primary{background:var(--btn); color:var(--btn-ink)}
+.ghost{border:1.5px solid var(--line)}
+.goldbtn{background:var(--gold); color:#221800}
+.danger{background:var(--bust); color:#fff}
+
+header{display:flex; align-items:center; justify-content:space-between; gap:10px; padding:4px 0 12px}
+h1{font-size:2.1rem; font-weight:800; letter-spacing:-.03em; margin:0; line-height:1}
+.hbtns{display:flex; gap:6px}
+.hbtns button{padding:8px 12px; font-size:.9rem; background:var(--surface); border:1.5px solid var(--line)}
+.hbtns .live{border-color:var(--felt)}
+.hbtns .live::before{content:""; display:inline-block; width:8px; height:8px; border-radius:50%; background:#3CC46B; margin-right:6px; vertical-align:1px}
+
+/* Felt tray */
+.tray{position:relative; border-radius:24px; padding:16px 14px 16px; color:var(--felt-ink);
+  background:radial-gradient(120% 80% at 50% 0%, rgba(255,255,255,.09), transparent 60%),
+    repeating-linear-gradient(45deg, rgba(255,255,255,.02) 0 2px, transparent 2px 4px),
+    linear-gradient(var(--felt), var(--felt-2));
+  box-shadow:inset 0 0 0 6px rgba(0,0,0,.2), inset 0 12px 30px rgba(0,0,0,.28)}
+.tray.isbust{background:radial-gradient(120% 80% at 50% 0%, rgba(255,120,100,.18), transparent 60%), linear-gradient(#5A2422,#3A1615)}
+.top{display:flex; justify-content:space-between; align-items:flex-start; gap:10px}
+.who{font-size:1.5rem; font-weight:800; line-height:1.1}
+.sub{color:var(--felt-muted); font-size:.88rem}
+.turn{text-align:right; flex:none}
+.turn strong{display:block; font-size:2.6rem; font-weight:800; line-height:1; letter-spacing:-.03em; color:var(--gold)}
+.turn .sub{display:block}
+.dice-row{display:flex; justify-content:center; gap:8px; padding:22px 0 10px; min-height:96px; align-items:center}
+.die{position:relative; flex:0 0 auto; width:min(56px, calc((100% - 40px) / 6)); aspect-ratio:1; border-radius:22%;
+  background:var(--die); padding:6px; display:grid; grid-template:repeat(3,1fr)/repeat(3,1fr);
+  box-shadow:0 4px 0 #CCC8BA, 0 8px 14px rgba(0,0,0,.35); transition:transform .15s, opacity .15s, box-shadow .15s}
+.dice-row .die{width:min(56px, calc((100% - 40px) / 6))}
+.die s{display:block; width:70%; aspect-ratio:1; border-radius:50%; background:var(--pip); place-self:center}
+.die s.red{background:#C2271F}
+button.die{padding:6px; border-radius:22%}
+.die.can{outline:2px dashed var(--gold); outline-offset:3px}
+.die.kept{background:var(--gold-face); transform:translateY(-8px);
+  box-shadow:0 0 0 3px var(--gold), 0 0 22px 6px rgba(242,194,48,.55), 0 10px 16px rgba(0,0,0,.35); outline:none}
+.die.kept::after{content:"✓"; position:absolute; top:-9px; right:-9px; width:20px; height:20px; border-radius:50%;
+  background:var(--gold); color:#221800; font-size:.75rem; font-weight:800; display:grid; place-items:center; box-shadow:0 1px 3px rgba(0,0,0,.4)}
+.die.dead{opacity:.38; filter:grayscale(1); transform:scale(.88)}
+.isbust .die.dead{opacity:.75; filter:none}
+.die.ghost{background:transparent; box-shadow:none; border:2px dashed rgba(255,255,255,.28)}
+.die.ghost.gold{border-color:var(--gold)}
+.die.mini{width:22px; padding:2px; border-radius:5px; box-shadow:0 1px 0 #CCC8BA}
+.chips{display:flex; flex-wrap:wrap; gap:6px; justify-content:center; min-height:30px}
+.chip{background:rgba(242,194,48,.16); border:1.5px solid var(--gold); color:var(--gold-face); border-radius:999px; padding:3px 11px; font-weight:600; font-size:.9rem}
+.chip.bad{background:rgba(255,255,255,.08); border-color:rgba(255,255,255,.35); color:var(--felt-ink)}
+.guide{text-align:center; margin:10px 4px 0; font-size:1rem}
+.guide b{color:var(--gold)}
+.note{text-align:center; color:#FFD27A; font-size:.85rem; margin:6px 0 0}
+.fix{display:block; margin:8px auto 0; padding:6px 10px; color:var(--felt-muted); font-size:.85rem; text-decoration:underline; text-underline-offset:3px}
+.rail{display:flex; flex-wrap:wrap; gap:8px; justify-content:center; align-items:center; margin-top:14px; padding-top:12px;
+  border-top:1px dashed rgba(255,255,255,.2); font-size:.85rem; color:var(--felt-muted)}
+.rail .grp{display:flex; gap:3px; align-items:center}
+.rail .grp em{font-style:normal; margin-left:4px; color:var(--felt-ink)}
+.rail .inh{border:1.5px solid var(--gold); border-radius:8px; padding:1px 7px; color:var(--gold-face)}
+.bustmsg{text-align:center; font-size:1.6rem; font-weight:800; margin:4px 0 0}
+.offer{background:rgba(0,0,0,.22); border:1.5px dashed var(--gold); border-radius:16px; padding:12px; margin-top:12px; text-align:center}
+.offer strong{color:var(--gold)}
+.win{text-align:center; padding:30px 6px 22px}
+.win strong{display:block; font-size:2.2rem; font-weight:800; color:var(--gold); line-height:1.1}
+
+/* Board */
+.boardtitle{font-size:1rem; font-weight:600; color:var(--muted); margin:18px 2px 8px}
+.board{list-style:none; margin:0; padding:0; display:grid; gap:6px}
+.row{display:grid; grid-template-columns:auto 1fr auto auto; align-items:center; gap:4px 12px;
+  background:var(--surface); border:1.5px solid var(--line); border-radius:14px; padding:10px 14px}
+.row.current{border-color:var(--felt); box-shadow:inset 5px 0 0 var(--felt)}
+.row .pos{color:var(--muted); font-size:.85rem; width:1.2em}
+.row .name{font-weight:600; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.row .name small{display:block; font-weight:400; color:var(--muted); font-size:.8rem}
+.row .score{font-size:1.45rem; font-weight:800; letter-spacing:-.02em; text-align:right}
+.row .score.neg{color:var(--bust)}
+.crosses{display:flex; gap:3px}
+.crosses i{width:17px; height:17px; border-radius:5px; border:1.5px solid var(--line); display:grid; place-items:center; font-style:normal; font-size:.7rem; font-weight:800; color:transparent}
+.crosses i.on{background:var(--bust); border-color:var(--bust); color:#fff}
+.bar{grid-column:1/-1; height:4px; background:var(--line); border-radius:4px; overflow:hidden}
+.bar b{display:block; height:100%; background:var(--felt)}
+
+/* Bottom action bar */
+.actionbar{position:fixed; left:0; right:0; bottom:0; z-index:10; background:var(--surface); border-top:1.5px solid var(--line);
+  padding:10px 14px calc(10px + env(safe-area-inset-bottom,0px))}
+.actionbar .in{max-width:560px; margin:0 auto; display:grid; grid-template-columns:1fr 1fr; gap:8px}
+.actionbar button{padding:16px 10px; font-size:1.02rem; line-height:1.2}
+.actionbar button small{display:block; font-weight:400; font-size:.8rem; opacity:.8}
+.actionbar .wide{grid-column:1/-1}
+.actionbar .msg{grid-column:1/-1; text-align:center; color:var(--muted); padding:4px 0 2px}
+
+/* Setup */
+.setup{background:var(--surface); border:1.5px solid var(--line); border-radius:20px; padding:18px}
+.setup h2{margin:0 0 12px; font-size:1.3rem}
+.plist{list-style:none; padding:0; margin:0 0 12px; display:grid; gap:6px}
+.plist li{display:flex; justify-content:space-between; align-items:center; padding:8px 12px; background:var(--bg); border-radius:10px; font-weight:600}
+.plist li.empty{background:none; padding-left:0; font-weight:400; color:var(--muted)}
+.plist button{padding:4px 10px; color:var(--muted)}
+.addrow{display:flex; gap:8px; margin-bottom:14px}
+input[type=text]{flex:1; min-width:0; font:inherit; padding:12px 14px; border-radius:12px; border:1.5px solid var(--line); background:var(--bg); color:var(--ink)}
+.rules{font-size:.88rem; color:var(--muted); margin:16px 0 0; padding-left:18px}
+.rules li{margin-bottom:4px}
+
+/* Dialogs */
+dialog{border:0; padding:0; border-radius:22px; width:calc(100% - 20px); max-width:520px; background:var(--surface); color:var(--ink);
+  margin:auto auto calc(10px + env(safe-area-inset-bottom,0px)); max-height:85vh; overflow:auto}
+.board .row{cursor:pointer}
+.boardtitle small{font-weight:400; font-size:.85rem}
+.stats{display:grid; grid-template-columns:repeat(3,1fr); gap:6px; margin:4px 0 12px}
+.stats div{background:var(--bg); border-radius:12px; padding:8px 10px}
+.stats strong{display:block; font-size:1.3rem; font-weight:800}
+.stats span{font-size:.8rem; color:var(--muted)}
+.chart{width:100%; height:110px; display:block; margin-bottom:10px; background:var(--bg); border-radius:12px}
+.hlist{list-style:none; margin:0; padding:0}
+.hlist li{display:grid; grid-template-columns:4.2em 1fr auto; gap:8px; align-items:center; padding:9px 2px; border-bottom:1px solid var(--line)}
+.hlist .t{color:var(--muted); font-size:.85rem}
+.hlist .d{font-weight:600}
+.hlist .d small{display:block; font-weight:400; color:var(--muted)}
+.hlist .x{color:var(--bust)}
+.hlist .s{font-weight:800; text-align:right}
+.hlist .empty{display:block; color:var(--muted); border:0}
+.olist{list-style:none; margin:0 0 10px; padding:0}
+.olist li{display:flex; align-items:center; gap:8px; padding:8px 0; border-bottom:1px solid var(--line); font-weight:600}
+.olist li.cur::after{content:"playing now"; font-weight:400; font-size:.8rem; color:var(--muted); order:2}
+.olist .n{flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; order:1}
+.olist .pos{color:var(--muted); width:1.2em; order:0}
+.mv{order:3; padding:8px 12px; border:1.5px solid var(--line); font-size:1rem; line-height:1}
+.obtns{display:flex; gap:4px; align-items:center}
+.plist .mv{padding:6px 10px; color:var(--ink)}
+dialog::backdrop{background:rgba(0,0,0,.5)}
+.dlg{padding:18px}
+.dlghead{display:flex; justify-content:space-between; align-items:center; margin-bottom:8px}
+.dlghead h2{margin:0; font-size:1.2rem}
+.dlghead button{padding:6px 10px; color:var(--muted)}
+.dlg p{margin:0 0 10px; color:var(--muted); font-size:.92rem}
+.dielist{list-style:none; padding:0; margin:0 0 12px}
+.dielist li{display:flex; align-items:center; gap:10px; padding:9px 0; border-bottom:1px solid var(--line)}
+.dot{width:14px; height:14px; border-radius:50%; border:1.5px solid var(--line); flex:none}
+.dielist .grow{flex:1; min-width:0}
+.dielist small{color:var(--muted); display:block}
+.dielist button{padding:6px 10px; font-size:.85rem}
+.full{width:100%; margin-top:8px}
+.pad{display:grid; grid-template-columns:repeat(6,1fr); gap:6px; margin:10px 0}
+.pad button{padding:6px; background:var(--bg); border-radius:12px}
+.pad .die{width:100%; box-shadow:0 2px 0 #CCC8BA}
+.padvals{display:flex; gap:8px; min-height:52px; align-items:center; flex-wrap:wrap; padding:8px; border-radius:14px; background:var(--felt)}
+.padvals .die{width:36px; padding:4px; cursor:pointer}
+.padvals .hint{color:var(--felt-muted); font-size:.9rem; padding:0 6px}
+.row2{display:flex; gap:8px}
+.row2 button{flex:1}
+.toggle{display:flex; align-items:center; justify-content:space-between; gap:10px; padding:10px 0 14px}
+.toggle input{width:22px; height:22px; accent-color:var(--felt)}
+
+.toast{position:fixed; left:50%; bottom:calc(96px + env(safe-area-inset-bottom,0px)); transform:translateX(-50%) translateY(16px);
+  background:var(--ink); color:var(--bg); padding:11px 16px; border-radius:12px; font-weight:600; font-size:.92rem;
+  opacity:0; pointer-events:none; transition:opacity .2s, transform .2s; max-width:calc(100% - 28px); text-align:center; z-index:30}
+.toast.show{opacity:1; transform:translateX(-50%) translateY(0)}
+.hidden{display:none !important}
+@media (prefers-reduced-motion:reduce){*{transition:none !important}}
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>10 000</h1>
+    <div class="hbtns">
+      <button id="dicebtn" data-open="dlgDice">Connect dice</button>
+      <button id="menubtn" data-open="dlgOpts" class="hidden">Menu</button>
+    </div>
+  </header>
+
+  <section class="setup" id="setup">
+    <h2>Who’s playing?</h2>
+    <ul class="plist" id="plist"></ul>
+    <div class="addrow">
+      <input type="text" id="pname" placeholder="Player name" autocomplete="off" maxlength="20">
+      <button class="ghost" id="padd">Add</button>
+    </div>
+    <button class="primary" id="start" style="width:100%">Start game</button>
+    <ul class="rules">
+      <li>Single 1 = 100, single 5 = 50. Three of a kind = face × 100 (three 1s = 1 000), each extra die doubles it.</li>
+      <li>Straight of five = 500, straight of six = 1 000, three pairs = 500.</li>
+      <li>Hand full (every die scores): you must throw again.</li>
+      <li>500 in one turn to enter the game. Reach exactly 10 000 to win; going over scores nothing.</li>
+      <li>When a player stops, the next one can take over their points and leftover dice.</li>
+      <li>Once in the game, no score = a cross. Three in a row = −1 000.</li>
+    </ul>
+  </section>
+
+  <div id="game" class="hidden">
+    <section class="tray" id="tray" aria-live="polite"></section>
+    <h2 class="boardtitle">Scores <small>(tap a player for their history)</small></h2>
+    <ul class="board" id="board"></ul>
+  </div>
+</main>
+
+<div class="actionbar hidden" id="bar"><div class="in" id="barin"></div></div>
+
+<dialog id="dlgDice"><div class="dlg">
+  <div class="dlghead"><h2>Dice</h2><button data-close>Close</button></div>
+  <p id="blehelp">Close the GoDice app first: a die can only talk to one app at a time. Browsers open one Bluetooth window per die, so pick them one after another. Once connected, they’re remembered: next time, “Reconnect all dice” links them all in one tap.</p>
+  <ul class="dielist" id="dielist"></ul>
+  <button class="goldbtn full hidden" id="connectsaved">Reconnect all dice</button>
+  <button class="primary full" id="connect">Connect a die</button>
+  <button class="ghost full" id="connectall">Dice not listed? Show all Bluetooth devices</button>
+</div></dialog>
+
+<dialog id="dlgPad"><div class="dlg">
+  <div class="dlghead"><h2 id="padtitle">Type a throw</h2><button data-close>Close</button></div>
+  <div class="padvals" id="padvals"></div>
+  <div class="pad" id="pad"></div>
+  <div class="row2">
+    <button class="ghost" id="padclear">Clear</button>
+    <button class="primary" id="padsubmit">Use this throw</button>
+  </div>
+</div></dialog>
+
+<dialog id="dlgOpts"><div class="dlg">
+  <div class="dlghead"><h2>Menu</h2><button data-close>Close</button></div>
+  <button class="goldbtn full hidden" id="installbtn" style="margin:0 0 8px">Install as an app</button>
+  <button class="ghost full" id="reorder" style="margin:0 0 8px">Change seating order</button>
+  <div class="row2">
+    <button class="ghost" id="undo">Undo last turn</button>
+    <button class="ghost" id="newgame">New game</button>
+  </div>
+</div></dialog>
+
+<dialog id="dlgOrder"><div class="dlg">
+  <div class="dlghead"><h2>Seating order</h2><button data-close>Done</button></div>
+  <p>Move players to match where they sit. Play continues with whoever’s turn it is now.</p>
+  <ul class="olist" id="olist"></ul>
+</div></dialog>
+
+<dialog id="dlgHist"><div class="dlg">
+  <div class="dlghead"><h2 id="histname"></h2><button data-close>Close</button></div>
+  <div id="histbody"></div>
+</div></dialog>
+
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+(() => {
+const TARGET = 10000, ENTRY = 500, ND = 6, KEY = 'dixmille-v2';
+const PIPS = {1:[4],2:[0,8],3:[0,4,8],4:[0,2,6,8],5:[0,2,4,6,8],6:[0,2,3,5,6,8]};
+const CNT = ['','One','Two','Three','Four','Five','Six'];
+const $ = id => document.getElementById(id);
+const fmt = n => (n < 0 ? '−' : '') + String(Math.abs(n)).replace(/\B(?=(\d{3})+(?!\d))/g, '\u202F');
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const plural = (n, a, b) => n === 1 ? a : b;
+
+/* ---------- State ---------- */
+const newTurn = () => ({points:0, diceLeft:ND, phase:'await', throw:[], sel:[], log:[], note:'', lost:0, offer:null, from:null, inherited:0});
+const fresh = () => ({players:[], names:[], current:0, started:false, hotDice:true, turn:newTurn(), history:[], log:[], winner:null});
+let S = null;
+try { S = JSON.parse(localStorage.getItem(KEY)); } catch(e) {}
+if (!S){
+  S = fresh();
+  try { const old = JSON.parse(localStorage.getItem('dixmille-v1')); if (old && old.names) S.names = old.names; } catch(e) {}
+}
+if (!S.log) S.log = [];
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch(e) {} };
+const cur = () => S.players[S.current];
+const nextName = () => S.players[(S.current + 1) % S.players.length].name;
+
+/* ---------- Scoring ---------- */
+function countsParts(vals){
+  const c = [0,0,0,0,0,0,0]; vals.forEach(v => c[v]++);
+  const parts = [];
+  for (let f = 1; f <= 6; f++){
+    const n = c[f]; if (!n) continue;
+    if (n >= 3) parts.push({label:`${CNT[n]} ${f}s`, pts:(f === 1 ? 1000 : f * 100) * Math.pow(2, n - 3)});
+    else if (f === 1 || f === 5) parts.push({label: n === 1 ? `One ${f}` : `Two ${f}s`, pts:(f === 1 ? 100 : 50) * n});
+    else return null;
+  }
+  return parts;
+}
+const total = p => p ? p.reduce((s, x) => s + x.pts, 0) : -1;
+function removeRun(vals, run){
+  const rest = vals.slice();
+  for (const r of run){ const i = rest.indexOf(r); if (i < 0) return null; rest.splice(i, 1); }
+  return rest;
+}
+function scoreParts(vals){ // best breakdown using ALL given dice, [] if empty, null if impossible
+  if (!vals.length) return [];
+  let best = countsParts(vals);
+  const consider = c => { if (c && total(c) > total(best)) best = c; };
+  if (vals.length === 6){
+    if ([...vals].sort().join('') === '123456') consider([{label:'Straight of six', pts:1000}]);
+    const c = {}; vals.forEach(v => c[v] = (c[v] || 0) + 1);
+    if (Object.values(c).every(n => n % 2 === 0)) consider([{label:'Three pairs', pts:500}]);
+  }
+  if (vals.length >= 5){
+    for (const run of [[1,2,3,4,5],[2,3,4,5,6]]){
+      const rest = removeRun(vals, run); if (!rest) continue;
+      const rp = rest.length ? countsParts(rest) : [];
+      if (rp) consider([{label:'Straight of five', pts:500}, ...rp]);
+    }
+  }
+  return best;
+}
+const scoreVals = v => total(scoreParts(v));
+function subsets(n){ const out = []; for (let m = 1; m < (1 << n); m++){ const idx = []; for (let i = 0; i < n; i++) if (m & (1 << i)) idx.push(i); out.push(idx); } return out; }
+function bestSel(vals){
+  let best = [], bp = 0;
+  for (const idx of subsets(vals.length)){
+    const p = scoreVals(idx.map(i => vals[i]));
+    if (p > bp || (p === bp && p > 0 && idx.length > best.length)){ bp = p; best = idx; }
+  }
+  return best;
+}
+function scoringDice(vals){
+  const s = new Set();
+  for (const idx of subsets(vals.length)) if (scoreVals(idx.map(i => vals[i])) > 0) idx.forEach(i => s.add(i));
+  return s;
+}
+const selVals = () => S.turn.sel.map(i => S.turn.throw[i]);
+const selPts = () => scoreVals(selVals());
+
+/* ---------- Turn logic ---------- */
+function handleThrow(vals, isFix){
+  if (!S.started || S.winner) return;
+  const t = S.turn;
+  vals = vals.filter(v => v >= 1 && v <= 6).slice(0, ND);
+  if (!vals.length) return;
+  if (!isFix){
+    if (t.phase === 'bust'){ bustNext(); return handleThrow(vals, false); }
+    if (t.phase === 'decide') autoKeep();
+    else if (t.phase !== 'await') return;
+    if (t.offer){
+      if (vals.length === t.offer.dice && t.offer.dice !== ND) acceptOffer();
+      else t.offer = null;
+    }
+    if (t.diceLeft <= 0){ toast('No dice left. Stop to bank your points.'); return; }
+  }
+  t.mustThrow = false;
+  t.throw = vals;
+  t.note = vals.length !== t.diceLeft ? `${vals.length} ${plural(vals.length,'die','dice')} read, ${t.diceLeft} expected. Use “Fix it” if that’s wrong.` : '';
+  const best = bestSel(vals);
+  clearBust();
+  if (!best.length){ t.phase = 'bust'; t.sel = []; t.lost = t.points; startBust(); }
+  else { t.phase = 'decide'; t.sel = best; }
+  save(); render();
+}
+let bustTimer = null, bustLeft = 0;
+function startBust(){
+  clearBust(); bustLeft = 4;
+  bustTimer = setInterval(() => { bustLeft--; if (bustLeft <= 0) bustNext(); else renderBar(); }, 1000);
+}
+function clearBust(){ clearInterval(bustTimer); bustTimer = null;
+}
+function autoKeep(){
+  const t = S.turn;
+  let sel = t.sel;
+  if (selPts() <= 0){ sel = bestSel(t.throw); toast('Kept the scoring dice for you'); }
+  commitKeep(sel);
+}
+function commitKeep(sel, silent){
+  const t = S.turn;
+  const kept = sel.map(i => t.throw[i]);
+  const p = scoreVals(kept);
+  if (p <= 0) return false;
+  t.points += p; t.diceLeft -= sel.length;
+  t.log.push({dice:kept.sort(), pts:p});
+  t.mustThrow = scoreVals(t.throw) > 0;
+  if (t.diceLeft <= 0) t.diceLeft = ND;
+  if (t.mustThrow && !silent) toast('Hand full! You must throw again.');
+  t.throw = []; t.sel = []; t.phase = 'await'; t.note = '';
+  return true;
+}
+function acceptOffer(){
+  const t = S.turn, o = t.offer; if (!o) return;
+  t.points = o.points; t.diceLeft = o.dice; t.from = o.from; t.inherited = o.points; t.offer = null;
+  toast(`Taking over ${o.from}’s +${fmt(o.points)}`);
+}
+function bankable(){
+  const t = S.turn;
+  if (t.phase === 'decide'){ const p = selPts(); return p > 0 ? t.points + p : -1; }
+  if (t.phase === 'await') return t.points;
+  return -1;
+}
+const fullHand = () => { const t = S.turn; return !!t.mustThrow || (t.phase === 'decide' && scoreVals(t.throw) > 0); };
+const canBank = () => { const p = bankable(); return p > 0 && !fullHand() && (cur().inGame || p >= ENTRY); };
+function pushHistory(){
+  S.history.push(JSON.stringify({players:S.players, current:S.current, logLen:S.log.length}));
+  if (S.history.length > 40) S.history.shift();
+}
+function logEv(p, ev){ ev.p = S.players.indexOf(p); ev.score = p.score; ev.crosses = p.crosses; S.log.push(ev); }
+function addCross(p){
+  if (!p.inGame){ logEv(p, {kind:'miss'}); toast(`${p.name} isn’t in the game yet, no cross`); return; }
+  p.crosses++;
+  if (p.crosses >= 3){ p.score -= 1000; p.crosses = 0; logEv(p, {kind:'penalty'}); toast(`${p.name}: third cross, −1\u202F000`); }
+  else { logEv(p, {kind:'cross', n:p.crosses}); toast(`${p.name} gets a cross (${p.crosses}/3)`); }
+}
+function bank(){
+  if (!canBank()) return;
+  const t = S.turn, p = cur();
+  if (t.phase === 'decide') commitKeep(t.sel, true);
+  pushHistory();
+  const sum = p.score + t.points;
+  if (sum > TARGET){ logEv(p, {kind:'over', pts:t.points, inh:t.inherited}); toast(`${fmt(sum)} is over 10\u202F000, no score this turn`); }
+  else {
+    p.score = sum; p.crosses = 0; p.inGame = true;
+    logEv(p, {kind:'bank', pts:t.points, inh:t.inherited, win:sum === TARGET});
+    if (sum === TARGET) S.winner = p.name;
+    else toast(`${p.name} banks +${fmt(t.points)}`);
+  }
+  if (!S.winner) nextPlayer(t.diceLeft > 0 ? {from:p.name, points:t.points, dice:t.diceLeft} : null);
+  save(); render();
+}
+function bustNext(){ clearBust(); pushHistory(); addCross(cur()); nextPlayer(null); save(); render(); }
+function nextPlayer(offer){
+  S.current = (S.current + 1) % S.players.length;
+  S.turn = newTurn(); S.turn.offer = offer; resetCollector();
+}
+function undo(){
+  const snap = S.history.pop();
+  if (!snap){ toast('Nothing to undo'); return; }
+  const o = JSON.parse(snap);
+  clearBust();
+  S.players = o.players; S.current = o.current; S.winner = null; S.turn = newTurn(); resetCollector();
+  if (o.logLen != null) S.log.length = o.logLen;
+  toast(`Back to ${cur().name}’s turn`); save(); render();
+}
+function startGame(names){
+  S.players = names.map(n => ({name:n, score:0, crosses:0, inGame:false}));
+  S.names = names.slice(); S.current = 0; S.started = true; S.winner = null; S.history = []; S.log = []; S.turn = newTurn();
+  save(); render();
+}
+
+/* ---------- Rendering ---------- */
+function dieHTML(v, cls = '', attrs = '', tag = 'span'){
+  let inner = '';
+  if (v){ const on = PIPS[v]; for (let i = 0; i < 9; i++) inner += on.includes(i) ? `<s${v === 1 ? ' class="red"' : ''}></s>` : '<span></span>'; }
+  return `<${tag} class="die ${cls}" ${attrs} ${v ? `aria-label="${v}"` : 'aria-hidden="true"'}>${inner}</${tag}>`;
+}
+const chipsHTML = parts => parts.map(x => `<span class="chip">${x.label} +${fmt(x.pts)}</span>`).join('');
+
+function render(){
+  $('setup').classList.toggle('hidden', S.started);
+  $('game').classList.toggle('hidden', !S.started);
+  $('bar').classList.toggle('hidden', !S.started);
+  $('menubtn').classList.toggle('hidden', !S.started);
+  if (!S.started){ renderSetup(); return; }
+  renderBoard();
+  if (S.winner){ renderWin(); return; }
+
+  const t = S.turn, p = cur();
+  const live = t.points + (t.phase === 'decide' ? Math.max(0, selPts()) : 0);
+  let dice = '', chips = '', guide = '', extra = '';
+
+  if (t.phase === 'await'){
+    const n = t.offer ? ND : t.diceLeft;
+    for (let i = 0; i < n; i++) dice += dieHTML(0, 'ghost' + (t.offer && i < t.offer.dice ? ' gold' : ''));
+    if (t.offer){
+      extra = `<div class="offer"><strong>${esc(t.offer.from)}</strong> stopped with <strong>+${fmt(t.offer.points)}</strong> and ${t.offer.dice} ${plural(t.offer.dice,'die','dice')} left.<br>
+        <span class="sub">Take over and throw ${t.offer.dice === ND ? 'all six' : 'those ' + t.offer.dice}, or start fresh with all six.${t.offer.dice !== ND ? ' Throwing ' + t.offer.dice + ' dice takes over automatically.' : ''}</span></div>`;
+    } else if (t.mustThrow) guide = `<b>Hand full!</b> Throw ${t.diceLeft === ND ? 'all six dice' : 'the ' + t.diceLeft + ' remaining dice'} again.`;
+    else if (t.points === 0) guide = `Throw ${t.diceLeft === ND ? 'all six dice' : t.diceLeft + ' dice'}.`;
+    else guide = `Throw the <b>${t.diceLeft}</b> remaining ${plural(t.diceLeft,'die','dice')}, or stop.`;
+  } else {
+    const can = scoringDice(t.throw);
+    const order = t.throw.map((v, i) => i).sort((a, b) => t.throw[a] - t.throw[b]);
+    dice = order.map(i => {
+      const v = t.throw[i];
+      if (t.phase === 'bust') return dieHTML(v, 'dead');
+      const k = t.sel.includes(i);
+      const cls = k ? 'kept' : can.has(i) ? 'can' : 'dead';
+      return dieHTML(v, cls, `data-i="${i}" aria-pressed="${k}" ${can.has(i) || k ? '' : 'disabled'}`, 'button');
+    }).join('');
+    if (t.phase === 'decide'){
+      const parts = scoreParts(selVals());
+      chips = parts === null ? '<span class="chip bad">That die doesn’t score on its own</span>' : chipsHTML(parts);
+      guide = (fullHand() ? '<b>Hand full!</b> Every die scores, so you must throw again. ' : '')
+        + (t.sel.length ? 'Gold dice are kept. Tap a die to keep or release it.' : 'Tap the dice you want to keep.');
+    } else {
+      extra = `<p class="bustmsg">No score</p><p class="guide">${t.lost ? `+${fmt(t.lost)} lost. ` : ''}${p.inGame ? `Cross ${Math.min(3, p.crosses + 1)} of 3${p.crosses + 1 >= 3 ? ', −1\u202F000' : ''}.` : 'Not in the game yet, so no cross.'}</p>`;
+    }
+  }
+  const railItems = [];
+  if (t.inherited) railItems.push(`<span class="inh">From ${esc(t.from)} +${fmt(t.inherited)}</span>`);
+  t.log.forEach(g => railItems.push(`<span class="grp">${g.dice.map(v => dieHTML(v, 'mini')).join('')}<em>+${fmt(g.pts)}</em></span>`));
+  const subline = `${fmt(p.score)} banked${p.inGame ? '' : `, needs ${fmt(ENTRY)} this turn to enter`}`;
+
+  $('tray').className = 'tray' + (t.phase === 'bust' ? ' isbust' : '');
+  $('tray').innerHTML = `
+    <div class="top">
+      <div><div class="who">${esc(p.name)}</div><div class="sub">${subline}</div></div>
+      <div class="turn"><span class="sub">this turn</span><strong>+${fmt(live)}</strong></div>
+    </div>
+    <div class="dice-row">${dice}</div>
+    ${t.phase === 'decide' ? `<div class="chips">${chips}</div>` : ''}
+    ${guide ? `<p class="guide">${guide}</p>` : ''}${extra}
+    ${t.note ? `<p class="note">${t.note}</p>` : ''}
+    ${t.phase === 'decide' || t.phase === 'bust' ? '<button class="fix" data-act="fix">Wrong reading? Fix it</button>' : ''}
+    ${railItems.length ? `<div class="rail">${railItems.join('')}</div>` : ''}`;
+  renderBar();
+}
+function stopButton(){
+  const p = cur(), b = bankable(), sum = p.score + Math.max(0, b);
+  let label = 'Stop', small = `bank +${fmt(Math.max(0, b))}`;
+  if (fullHand()) small = 'hand full, throw again';
+  else if (b > 0 && !p.inGame && b < ENTRY) small = `needs ${fmt(ENTRY)} to enter`;
+  else if (b > 0 && sum > TARGET) small = 'over 10\u202F000, scores nothing';
+  else if (b > 0 && sum === TARGET){ label = 'Stop and win'; small = 'exactly 10\u202F000'; }
+  return `<button class="primary" data-act="bank" ${canBank() ? '' : 'disabled'}>${label}<small>${small}</small></button>`;
+}
+function renderBar(){
+  const t = S.turn;
+  let h = '';
+  if (t.phase === 'await' && t.offer){
+    h = `<button class="goldbtn" data-act="take">Take over<small>+${fmt(t.offer.points)}, ${t.offer.dice} ${plural(t.offer.dice,'die','dice')}</small></button>
+         <button class="ghost" data-act="fresh">Start fresh<small>all six dice</small></button>`;
+  } else if (t.phase === 'await'){
+    const left = t.diceLeft === 0 ? 'no dice left' : `throw ${t.diceLeft} ${plural(t.diceLeft,'die','dice')}`;
+    h = t.points > 0
+      ? `<button class="ghost" data-act="type">Type a throw<small>${left}</small></button>${stopButton()}`
+      : `<button class="ghost wide" data-act="type">Throw the dice, or type a throw</button>`;
+  } else if (t.phase === 'decide'){
+    const left = t.diceLeft - t.sel.length;
+    const rest = left <= 0 ? 'then throw all six' : `then throw ${left}`;
+    h = `<button class="ghost" data-act="keep" ${selPts() > 0 ? '' : 'disabled'}>Keep<small>${rest}</small></button>${stopButton()}`;
+  } else if (t.phase === 'bust'){
+    h = `<button class="danger wide" data-act="bust">Next player<small>${esc(nextName())}${bustTimer ? `, automatically in ${bustLeft}\u202Fs (or just throw)` : ''}</small></button>`;
+  }
+  $('barin').innerHTML = h;
+}
+function renderWin(){
+  $('tray').className = 'tray';
+  $('tray').innerHTML = `<div class="win"><strong>${esc(S.winner)} wins!</strong><span class="sub">Exactly 10\u202F000.</span></div>`;
+  $('barin').innerHTML = `<button class="goldbtn" data-act="rematch">Rematch<small>same players</small></button><button class="ghost" data-act="newplayers">New game<small>change players</small></button>`;
+}
+function renderBoard(){
+  $('board').innerHTML = S.players.map((p, i) => `
+    <li class="row ${i === S.current && !S.winner ? 'current' : ''}" data-p="${i}" tabindex="0" role="button" aria-label="${esc(p.name)}, history">
+      <span class="pos">${i + 1}</span>
+      <div class="name">${esc(p.name)}${p.inGame ? '' : `<small>not in yet</small>`}</div>
+      <div class="crosses" aria-label="${p.crosses} ${plural(p.crosses,'cross','crosses')}">${[0,1,2].map(k => `<i class="${k < p.crosses ? 'on' : ''}">✕</i>`).join('')}</div>
+      <div class="score ${p.score < 0 ? 'neg' : ''}">${fmt(p.score)}</div>
+      <div class="bar"><b style="width:${Math.max(0, Math.min(100, p.score / TARGET * 100))}%"></b></div>
+    </li>`).join('');
+}
+function renderSetup(){
+  $('plist').innerHTML = S.names.map((n, i) => `<li>${esc(n)}<span class="obtns">
+      <button class="mv" data-up="${i}" ${i ? '' : 'disabled'} aria-label="Move ${esc(n)} up">↑</button>
+      <button class="mv" data-down="${i}" ${i < S.names.length - 1 ? '' : 'disabled'} aria-label="Move ${esc(n)} down">↓</button>
+      <button data-rm="${i}" aria-label="Remove ${esc(n)}">Remove</button></span></li>`).join('')
+    || '<li class="empty">Add at least two players.</li>';
+  $('start').disabled = S.names.length < 2;
+}
+
+function evText(e){
+  const inh = e.inh ? `<small>incl. ${fmt(e.inh)} taken over</small>` : '';
+  if (e.kind === 'bank') return e.win ? `+${fmt(e.pts)}, wins!${inh}` : `+${fmt(e.pts)}${inh}`;
+  if (e.kind === 'over') return `<span class="x">+${fmt(e.pts)} over 10\u202F000</span><small>not counted</small>`;
+  if (e.kind === 'cross') return `<span class="x">✕ Cross ${e.n} of 3</span>`;
+  if (e.kind === 'penalty') return `<span class="x">✕ Third cross, −1\u202F000</span>`;
+  return 'No score<small>not in the game yet</small>';
+}
+function renderHist(i){
+  const p = S.players[i]; if (!p) return;
+  const evs = S.log.filter(e => e.p === i);
+  const banks = evs.filter(e => e.kind === 'bank');
+  const crossN = evs.filter(e => e.kind === 'cross' || e.kind === 'penalty').length;
+  const best = banks.reduce((m, e) => Math.max(m, e.pts), 0);
+  $('histname').textContent = p.name;
+  const pts = [0, ...evs.map(e => e.score)];
+  const lo = Math.min(0, ...pts), hi = Math.max(1000, ...pts);
+  const X = k => 8 + k * (284 / Math.max(1, pts.length - 1)), Y = v => 100 - (v - lo) / (hi - lo) * 88;
+  const line = pts.map((v, k) => `${X(k).toFixed(1)},${Y(v).toFixed(1)}`).join(' ');
+  const dots = evs.map((e, k) => e.kind === 'cross' || e.kind === 'penalty' || e.kind === 'over'
+    ? `<circle cx="${X(k + 1).toFixed(1)}" cy="${Y(e.score).toFixed(1)}" r="3.5" fill="var(--bust)"/>` : '').join('');
+  const chart = evs.length ? `<svg class="chart" viewBox="0 0 300 110" preserveAspectRatio="none" role="img" aria-label="Score over turns">
+      ${lo < 0 ? `<line x1="0" x2="300" y1="${Y(0)}" y2="${Y(0)}" stroke="var(--line)" stroke-dasharray="4 4"/>` : ''}
+      <polyline points="${line}" fill="none" stroke="var(--felt)" stroke-width="2.5" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>${dots}</svg>` : '';
+  $('histbody').innerHTML = `
+    <div class="stats">
+      <div><strong>${fmt(p.score)}</strong><span>score</span></div>
+      <div><strong>${crossN}</strong><span>${plural(crossN,'cross','crosses')} in total</span></div>
+      <div><strong>${best ? '+' + fmt(best) : '–'}</strong><span>best turn</span></div>
+    </div>${chart}
+    <ul class="hlist">${evs.length ? evs.map((e, k) => `<li><span class="t">Turn ${k + 1}</span><span class="d">${evText(e)}</span><span class="s">${fmt(e.score)}</span></li>`).reverse().join('')
+      : '<li class="empty">No turns played yet.</li>'}</ul>`;
+  $('dlgHist').showModal();
+}
+$('board').addEventListener('click', e => { const r = e.target.closest('[data-p]'); if (r) renderHist(+r.dataset.p); });
+$('board').addEventListener('keydown', e => { const r = e.target.closest('[data-p]'); if (r && (e.key === 'Enter' || e.key === ' ')){ e.preventDefault(); renderHist(+r.dataset.p); } });
+
+/* ---------- Events ---------- */
+$('tray').addEventListener('click', e => {
+  const d = e.target.closest('[data-i]'); if (!d || d.disabled) return;
+  const i = +d.dataset.i, t = S.turn;
+  t.sel = t.sel.includes(i) ? t.sel.filter(x => x !== i) : [...t.sel, i];
+  save(); render();
+});
+document.addEventListener('click', e => {
+  const op = e.target.closest('[data-open]'); if (op){ $(op.dataset.open).showModal(); if (op.dataset.open === 'dlgDice') renderDice(); return; }
+  if (e.target.closest('[data-close]')){ e.target.closest('dialog').close(); return; }
+  if (e.target.tagName === 'DIALOG'){ e.target.close(); return; }
+  const a = e.target.closest('[data-act]')?.dataset.act; if (!a) return;
+  const t = S.turn;
+  if (a === 'keep'){ if (commitKeep(t.sel)){ save(); render(); } }
+  else if (a === 'bank') bank();
+  else if (a === 'bust') bustNext();
+  else if (a === 'take'){ acceptOffer(); save(); render(); }
+  else if (a === 'fresh'){ t.offer = null; save(); render(); }
+  else if (a === 'fix'){ clearBust(); renderBar(); pad.mode = 'fix'; pad.vals = t.throw.slice(); openPad(); }
+  else if (a === 'type'){ pad.mode = 'new'; pad.vals = []; openPad(); }
+  else if (a === 'rematch') startGame(S.names);
+  else if (a === 'newplayers'){ S.started = false; S.winner = null; save(); render(); }
+});
+function addPlayer(){
+  const n = $('pname').value.trim(); if (!n) return;
+  if (S.names.length >= 8){ toast('8 players maximum'); return; }
+  S.names.push(n); $('pname').value = ''; save(); renderSetup(); $('pname').focus();
+}
+$('padd').onclick = addPlayer;
+$('pname').addEventListener('keydown', e => { if (e.key === 'Enter') addPlayer(); });
+$('plist').addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  const n = S.names, d = b.dataset;
+  if (d.rm != null) n.splice(+d.rm, 1);
+  else if (d.up != null){ const i = +d.up; if (i > 0) [n[i-1], n[i]] = [n[i], n[i-1]]; }
+  else if (d.down != null){ const i = +d.down; if (i < n.length - 1) [n[i+1], n[i]] = [n[i], n[i+1]]; }
+  else return;
+  save(); renderSetup();
+});
+$('start').onclick = () => startGame(S.names);
+$('undo').onclick = () => { $('dlgOpts').close(); undo(); };
+$('reorder').onclick = () => { $('dlgOpts').close(); renderOrder(); $('dlgOrder').showModal(); };
+function applyPerm(perm){ // new position i holds old player perm[i]
+  const inv = k => perm.indexOf(k);
+  S.players = perm.map(k => S.players[k]);
+  S.current = inv(S.current);
+  S.log.forEach(e => { e.p = inv(e.p); });
+  S.history = S.history.map(h => {
+    const o = JSON.parse(h);
+    if (o.players.length === perm.length){ o.players = perm.map(k => o.players[k]); o.current = inv(o.current); }
+    return JSON.stringify(o);
+  });
+  S.names = S.players.map(p => p.name);
+}
+function movePlayer(i, d){
+  const j = i + d; if (j < 0 || j >= S.players.length) return;
+  const perm = S.players.map((_, k) => k); [perm[i], perm[j]] = [perm[j], perm[i]];
+  applyPerm(perm); save(); render(); renderOrder();
+}
+function renderOrder(){
+  const n = S.players.length;
+  $('olist').innerHTML = S.players.map((p, i) => `<li class="${i === S.current && !S.winner ? 'cur' : ''}">
+    <span class="pos">${i + 1}</span><span class="n">${esc(p.name)}</span>
+    <button class="mv" data-mu="${i}" ${i ? '' : 'disabled'} aria-label="Move ${esc(p.name)} up">↑</button>
+    <button class="mv" data-md="${i}" ${i < n - 1 ? '' : 'disabled'} aria-label="Move ${esc(p.name)} down">↓</button></li>`).join('');
+}
+$('olist').addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  if (b.dataset.mu != null) movePlayer(+b.dataset.mu, -1);
+  if (b.dataset.md != null) movePlayer(+b.dataset.md, 1);
+});
+$('newgame').onclick = () => { if (confirm('End this game and start a new one?')){ $('dlgOpts').close(); S.started = false; S.winner = null; S.history = []; save(); render(); } };
+
+/* ---------- Manual entry ---------- */
+const pad = {mode:'new', vals:[]};
+$('pad').innerHTML = [1,2,3,4,5,6].map(v => `<button data-v="${v}" aria-label="Add a ${v}">${dieHTML(v)}</button>`).join('');
+$('pad').addEventListener('click', e => { const v = +e.target.closest('[data-v]')?.dataset.v; if (v && pad.vals.length < ND){ pad.vals.push(v); renderPad(); } });
+$('padvals').addEventListener('click', e => { const d = e.target.closest('[data-pi]'); if (d){ pad.vals.splice(+d.dataset.pi, 1); renderPad(); } });
+$('padclear').onclick = () => { pad.vals = []; renderPad(); };
+$('padsubmit').onclick = () => {
+  const isFix = pad.mode === 'fix' && (S.turn.phase === 'decide' || S.turn.phase === 'bust');
+  $('dlgPad').close();
+  handleThrow(pad.vals.slice(), isFix);
+  pad.vals = []; pad.mode = 'new';
+};
+function openPad(){ renderPad(); $('dlgPad').showModal(); }
+function renderPad(){
+  $('padtitle').textContent = pad.mode === 'fix' ? 'Fix the throw' : 'Type a throw';
+  $('padvals').innerHTML = pad.vals.length ? pad.vals.map((v, i) => dieHTML(v, '', `data-pi="${i}"`)).join('')
+    : '<span class="hint">Tap the faces below. Tap a die here to remove it.</span>';
+  $('padsubmit').disabled = !pad.vals.length;
+  $('padsubmit').textContent = pad.mode === 'fix' ? 'Replace throw' : 'Use this throw';
+}
+
+/* ---------- Toast ---------- */
+let toastTimer;
+function toast(msg){
+  const el = $('toast'); el.textContent = msg; el.classList.add('show');
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => el.classList.remove('show'), 2600);
+}
+
+/* ---------- GoDice over Bluetooth ---------- */
+const SVC = '6e400001-b5a3-f393-e0a9-e50e24dcca9e';
+const WRITE = '6e400002-b5a3-f393-e0a9-e50e24dcca9e';
+const NOTIFY = '6e400003-b5a3-f393-e0a9-e50e24dcca9e';
+const VEC = {1:[-64,0,0], 2:[0,0,64], 3:[0,64,0], 4:[0,-64,0], 5:[0,0,-64], 6:[64,0,0]};
+const COLORS = [['Black','#222'],['Red','#D3302A'],['Green','#2E9E4F'],['Blue','#2F6FD6'],['Yellow','#F2C230'],['Orange','#F08A24']];
+const dice = [];
+const rolling = new Set(), pending = new Map();
+let flushTimer, safetyTimer;
+
+function resetCollector(){ rolling.clear(); pending.clear(); clearTimeout(flushTimer); clearTimeout(safetyTimer); }
+function faceFrom(a, i){
+  const s = b => b > 127 ? b - 256 : b;
+  const x = s(a[i]), y = s(a[i+1]), z = s(a[i+2]);
+  let best = 1, bd = Infinity;
+  for (const f in VEC){ const [vx,vy,vz] = VEC[f]; const d = (x-vx)**2 + (y-vy)**2 + (z-vz)**2; if (d < bd){ bd = d; best = +f; } }
+  return best;
+}
+function onRollStart(die){
+  die.rolling = true; renderDice();
+  rolling.add(die.id); pending.delete(die.id);
+  clearTimeout(flushTimer); clearTimeout(safetyTimer);
+  safetyTimer = setTimeout(() => { rolling.clear(); if (pending.size) flush(); }, 8000);
+}
+function onStable(die, v, afterRoll){
+  die.value = v; die.rolling = false; renderDice();
+  if (!afterRoll || !rolling.has(die.id)) return;
+  rolling.delete(die.id); pending.set(die.id, v);
+  if (rolling.size === 0){ clearTimeout(flushTimer); flushTimer = setTimeout(flush, 900); }
+}
+function flush(){
+  clearTimeout(safetyTimer);
+  const vals = [...pending.values()]; pending.clear();
+  if (vals.length) handleThrow(vals, false);
+}
+function onMsg(die, a){
+  if (!a.length) return;
+  if (a[0] === 82){ onRollStart(die); return; }
+  if (a[0] === 83 && a.length >= 4){ onStable(die, faceFrom(a, 1), true); return; }
+  if (a[0] === 70 && a[1] === 83 && a.length >= 5){ onStable(die, faceFrom(a, 2), true); return; }
+  if ((a[0] === 84 || a[0] === 77) && a[1] === 83 && a.length >= 5){ onStable(die, faceFrom(a, 2), false); return; }
+  if (a[0] === 66 && a[1] === 97 && a[2] === 116){ die.battery = a[3]; renderDice(); return; }
+  if (a[0] === 67 && a[1] === 111 && a[2] === 108){ die.color = a[3]; renderDice(); return; }
+}
+async function send(die, bytes){
+  const buf = new Uint8Array(bytes);
+  try { await die.tx.writeValueWithResponse(buf); }
+  catch(e){ try { await die.tx.writeValueWithoutResponse(buf); } catch(e2){} }
+}
+async function setupDie(die, quiet){
+  die.status = 'connecting'; renderDice();
+  try {
+    const server = await die.device.gatt.connect();
+    const svc = await server.getPrimaryService(SVC);
+    const nt = await svc.getCharacteristic(NOTIFY);
+    die.tx = await svc.getCharacteristic(WRITE);
+    nt.addEventListener('characteristicvaluechanged', e => { const dv = e.target.value; onMsg(die, new Uint8Array(dv.buffer, dv.byteOffset, dv.byteLength)); });
+    await nt.startNotifications();
+    die.status = 'ready'; renderDice();
+    await send(die, [23]);
+    await send(die, [3]);
+    await send(die, [16, 2, 10, 10, 0, 255, 0, 1, 0]);
+  } catch(e){
+    die.status = 'disconnected'; renderDice();
+    if (!quiet) $('blehelp').innerHTML = '<strong>Couldn’t connect.</strong> Shake the die to wake it and try again. ' + esc(e.name + ': ' + e.message);
+  }
+}
+async function connectDie(all){
+  if (!navigator.bluetooth){ bleUnavailable(); return; }
+  try {
+    if (navigator.bluetooth.getAvailability && !(await navigator.bluetooth.getAvailability())){
+      $('blehelp').innerHTML = '<strong>Bluetooth looks off or unavailable.</strong> Turn on Bluetooth (and Location on older Android), and give Chrome the “Nearby devices” permission.';
+      return;
+    }
+    const exclude = dice.filter(d => d.status === 'ready' && d.name).map(d => ({name:d.name}));
+    const opts = all ? {acceptAllDevices:true, optionalServices:[SVC]} : {filters:[{namePrefix:'GoDice'}], optionalServices:[SVC]};
+    if (!all && exclude.length) opts.exclusionFilters = exclude;
+    const device = await navigator.bluetooth.requestDevice(opts);
+    if (dice.find(d => d.id === device.id && d.status === 'ready')){ toast('That die is already connected'); return; }
+    await attachDevice(device, false);
+  } catch(e){
+    if (e.name === 'NotFoundError') return;
+    if (e.name === 'SecurityError' || e.name === 'NotAllowedError')
+      $('blehelp').innerHTML = '<strong>Bluetooth is blocked in this view.</strong> Open this page on its own (hosted over https), not inside claude.ai. Typing throws still works here.<br><small>' + esc(e.name + ': ' + e.message) + '</small>';
+    else $('blehelp').innerHTML = '<strong>Bluetooth error.</strong> ' + esc(e.name + ': ' + e.message);
+  }
+}
+function attachDie(device){
+  let die = dice.find(d => d.id === device.id);
+  if (!die){
+    die = {id:device.id, name:device.name || 'GoDice', device, status:'connecting', value:null, battery:null, color:null};
+    dice.push(die);
+    device.addEventListener('gattserverdisconnected', () => { die.status = 'disconnected'; rolling.delete(die.id); renderDice(); });
+  }
+  return die;
+}
+async function attachDevice(device, saved){
+  const die = attachDie(device);
+  if (die.status === 'ready') return;
+  await setupDie(die, saved);
+  if (die.status === 'ready' || !saved || !device.watchAdvertisements) return;
+  // Not in reach yet: wait until it shows up (shake it), then connect
+  die.status = 'waiting'; renderDice();
+  const ac = new AbortController();
+  device.addEventListener('advertisementreceived', async () => { ac.abort(); if (die.status !== 'ready') await setupDie(die, true); }, {once:true});
+  try { await device.watchAdvertisements({signal:ac.signal}); } catch(e){ if (die.status === 'waiting'){ die.status = 'disconnected'; renderDice(); } }
+}
+async function connectSaved(silent){
+  if (!navigator.bluetooth || !navigator.bluetooth.getDevices) return;
+  let devs = [];
+  try { devs = (await navigator.bluetooth.getDevices()).filter(d => (d.name || '').startsWith('GoDice')); } catch(e){ return; }
+  $('connectsaved').classList.toggle('hidden', !devs.length);
+  if (!devs.length){ if (!silent) toast('No saved dice yet. Connect them once first.'); return; }
+  if (!silent) toast(`Reconnecting ${devs.length} ${plural(devs.length,'die','dice')}…`);
+  await Promise.all(devs.map(d => attachDevice(d, true)));
+}
+function bleUnavailable(){
+  $('blehelp').innerHTML = '<strong>This browser can’t reach Bluetooth dice.</strong> On Android use Chrome. On iPhone use the Bluefy browser. You can still type throws.';
+}
+function renderDice(){
+  const ready = dice.filter(d => d.status === 'ready').length;
+  const btn = $('dicebtn');
+  btn.textContent = ready ? `${ready} ${plural(ready,'die','dice')}` : 'Connect dice';
+  btn.classList.toggle('live', ready > 0);
+  $('dielist').innerHTML = dice.map((d, i) => {
+    const c = COLORS[d.color] || ['', 'transparent'];
+    const state = d.status === 'ready' ? (d.rolling ? 'Rolling…' : d.value ? `Showing ${d.value}` : 'Ready') : d.status === 'connecting' ? 'Connecting…' : d.status === 'waiting' ? 'Waiting for it, shake the die' : 'Disconnected';
+    return `<li><span class="dot" style="background:${c[1]}"></span>
+      <div class="grow">${esc(c[0] ? c[0] + ' die' : d.name)}<small>${state}${d.battery != null ? `, battery ${d.battery}%` : ''}</small></div>
+      ${d.status === 'disconnected' ? `<button class="ghost" data-rc="${i}">Reconnect</button>` : ''}
+      <button class="ghost" data-dc="${i}">Remove</button></li>`;
+  }).join('');
+  $('connect').textContent = ready ? `Connect another die (${ready} linked)` : 'Connect a die';
+}
+$('connect').onclick = () => connectDie(false);
+$('connectall').onclick = () => connectDie(true);
+$('connectsaved').onclick = () => connectSaved(false);
+$('dielist').addEventListener('click', e => {
+  const rc = e.target.dataset.rc, dc = e.target.dataset.dc;
+  if (rc != null) setupDie(dice[+rc]);
+  if (dc != null){ const d = dice[+dc]; try { d.device.gatt.disconnect(); } catch(_){} rolling.delete(d.id); dice.splice(+dc, 1); renderDice(); }
+});
+if (!navigator.bluetooth) bleUnavailable();
+else if (window.self !== window.top) $('blehelp').innerHTML += '<br><small>This page is running inside another page. If connecting fails, open it on its own.</small>';
+
+render(); renderDice();
+connectSaved(true);
+
+/* ---------- App install + offline ---------- */
+if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')){
+  navigator.serviceWorker.register('sw.js').catch(() => {});
+}
+let installEvt = null;
+window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); installEvt = e; $('installbtn').classList.remove('hidden'); });
+$('installbtn').onclick = async () => {
+  if (!installEvt) return;
+  $('dlgOpts').close(); installEvt.prompt();
+  await installEvt.userChoice; installEvt = null; $('installbtn').classList.add('hidden');
+};
+window.addEventListener('appinstalled', () => toast('Installed. Open 10 000 from your home screen.'));
+})();
+</script>
+</body>
+</html>
