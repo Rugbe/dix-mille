@@ -188,6 +188,9 @@ dialog::backdrop{background:rgba(0,0,0,.5)}
 .padvals .hint{color:var(--felt-muted); font-size:.9rem; padding:0 6px}
 .row2{display:flex; gap:8px}
 .row2 button{flex:1}
+.langrow{display:flex; gap:8px; margin:0 0 10px}
+.langrow button{flex:1}
+.langrow button.on{background:var(--btn); color:var(--btn-ink); border-color:var(--btn)}
 .toggle{display:flex; align-items:center; justify-content:space-between; gap:10px; padding:10px 0 14px}
 .toggle input{width:22px; height:22px; accent-color:var(--felt)}
 
@@ -205,19 +208,19 @@ dialog::backdrop{background:rgba(0,0,0,.5)}
     <h1>10 000</h1>
     <div class="hbtns">
       <button id="dicebtn" data-open="dlgDice">Connect dice</button>
-      <button id="menubtn" data-open="dlgOpts" class="hidden">Menu</button>
+      <button id="menubtn" data-open="dlgOpts" data-t="menu">Menu</button>
     </div>
   </header>
 
   <section class="setup" id="setup">
-    <h2>Who’s playing?</h2>
+    <h2 data-t="who">Who’s playing?</h2>
     <ul class="plist" id="plist"></ul>
     <div class="addrow">
-      <input type="text" id="pname" placeholder="Player name" autocomplete="off" maxlength="20">
-      <button class="ghost" id="padd">Add</button>
+      <input type="text" id="pname" data-tp="pname" placeholder="Player name" autocomplete="off" maxlength="20">
+      <button class="ghost" id="padd" data-t="add">Add</button>
     </div>
-    <button class="primary" id="start" style="width:100%">Start game</button>
-    <ul class="rules">
+    <button class="primary" id="start" style="width:100%" data-t="start">Start game</button>
+    <ul class="rules" data-t="rules">
       <li>Single 1 = 100, single 5 = 50. Three of a kind = face × 100 (three 1s = 1 000), each extra die doubles it.</li>
       <li>Straight of five = 500, straight of six = 1 000, three pairs = 500.</li>
       <li>Hand full (every die scores): you must throw again.</li>
@@ -229,7 +232,7 @@ dialog::backdrop{background:rgba(0,0,0,.5)}
 
   <div id="game" class="hidden">
     <section class="tray" id="tray" aria-live="polite"></section>
-    <h2 class="boardtitle">Scores <small>(tap a player for their history)</small></h2>
+    <h2 class="boardtitle" data-t="scores">Scores <small>(tap a player for their history)</small></h2>
     <ul class="board" id="board"></ul>
   </div>
 </main>
@@ -237,42 +240,44 @@ dialog::backdrop{background:rgba(0,0,0,.5)}
 <div class="actionbar hidden" id="bar"><div class="in" id="barin"></div></div>
 
 <dialog id="dlgDice"><div class="dlg">
-  <div class="dlghead"><h2>Dice</h2><button data-close>Close</button></div>
-  <p id="blehelp">Close the GoDice app first: a die can only talk to one app at a time. Browsers open one Bluetooth window per die, so pick them one after another. Once connected, they’re remembered: next time, “Reconnect all dice” links them all in one tap.</p>
+  <div class="dlghead"><h2 data-t="dice">Dice</h2><button data-close data-t="close">Close</button></div>
+  <p id="blehelp" data-t="blehelp">Close the GoDice app first: a die can only talk to one app at a time. Browsers open one Bluetooth window per die, so pick them one after another. Once connected, they’re remembered: next time, “Reconnect all dice” links them all in one tap.</p>
   <ul class="dielist" id="dielist"></ul>
-  <button class="goldbtn full hidden" id="connectsaved">Reconnect all dice</button>
+  <button class="goldbtn full hidden" id="connectsaved" data-t="reconnect">Reconnect all dice</button>
   <button class="primary full" id="connect">Connect a die</button>
-  <button class="ghost full" id="connectall">Dice not listed? Show all Bluetooth devices</button>
+  <button class="ghost full" id="connectall" data-t="showall">Dice not listed? Show all Bluetooth devices</button>
 </div></dialog>
 
 <dialog id="dlgPad"><div class="dlg">
-  <div class="dlghead"><h2 id="padtitle">Type a throw</h2><button data-close>Close</button></div>
+  <div class="dlghead"><h2 id="padtitle">Type a throw</h2><button data-close data-t="close">Close</button></div>
   <div class="padvals" id="padvals"></div>
   <div class="pad" id="pad"></div>
   <div class="row2">
-    <button class="ghost" id="padclear">Clear</button>
+    <button class="ghost" id="padclear" data-t="clear">Clear</button>
     <button class="primary" id="padsubmit">Use this throw</button>
   </div>
 </div></dialog>
 
 <dialog id="dlgOpts"><div class="dlg">
-  <div class="dlghead"><h2>Menu</h2><button data-close>Close</button></div>
-  <button class="goldbtn full hidden" id="installbtn" style="margin:0 0 8px">Install as an app</button>
-  <button class="ghost full" id="reorder" style="margin:0 0 8px">Change seating order</button>
-  <div class="row2">
-    <button class="ghost" id="undo">Undo last turn</button>
-    <button class="ghost" id="newgame">New game</button>
+  <div class="dlghead"><h2 data-t="menu">Menu</h2><button data-close data-t="close">Close</button></div>
+  <div class="langrow" role="group" aria-label="Language"><button class="ghost" data-lang="fr">Français</button><button class="ghost" data-lang="en">English</button></div>
+  <button class="goldbtn full hidden" id="installbtn" style="margin:0 0 8px" data-t="install">Install as an app</button>
+  <p id="installhint" data-t="installhint">To install: open Chrome’s ⋮ menu, tap “Add to home screen”, then choose “Install”.</p>
+  <button class="ghost full gameonly" id="reorder" style="margin:0 0 8px" data-t="reorder">Change seating order</button>
+  <div class="row2 gameonly">
+    <button class="ghost" id="undo" data-t="undo">Undo last turn</button>
+    <button class="ghost" id="newgame" data-t="newgame">New game</button>
   </div>
 </div></dialog>
 
 <dialog id="dlgOrder"><div class="dlg">
-  <div class="dlghead"><h2>Seating order</h2><button data-close>Done</button></div>
-  <p>Move players to match where they sit. Play continues with whoever’s turn it is now.</p>
+  <div class="dlghead"><h2 data-t="seating">Seating order</h2><button data-close data-t="done">Done</button></div>
+  <p data-t="seatinghelp">Move players to match where they sit. Play continues with whoever’s turn it is now.</p>
   <ul class="olist" id="olist"></ul>
 </div></dialog>
 
 <dialog id="dlgHist"><div class="dlg">
-  <div class="dlghead"><h2 id="histname"></h2><button data-close>Close</button></div>
+  <div class="dlghead"><h2 id="histname"></h2><button data-close data-t="close">Close</button></div>
   <div id="histbody"></div>
 </div></dialog>
 
@@ -282,8 +287,42 @@ dialog::backdrop{background:rgba(0,0,0,.5)}
 (() => {
 const TARGET = 10000, ENTRY = 500, ND = 6, KEY = 'dixmille-v2';
 const PIPS = {1:[4],2:[0,8],3:[0,4,8],4:[0,2,6,8],5:[0,2,4,6,8],6:[0,2,3,5,6,8]};
-const CNT = ['','One','Two','Three','Four','Five','Six'];
+const CNT = ['','One','Two','Three','Four','Five','Six'], CNT_FR = ['','Un','Deux','Trois','Quatre','Cinq','Six'];
 const $ = id => document.getElementById(id);
+let LANG = 'en';
+try { LANG = localStorage.getItem('dixmille-lang') || ((navigator.language || '').toLowerCase().startsWith('fr') ? 'fr' : 'en'); } catch(e) {}
+const tr = (en, fr) => LANG === 'fr' ? fr : en;
+const dd = n => tr(n === 1 ? 'die' : 'dice', n === 1 ? 'dé' : 'dés');
+const STATIC = {
+  menu:['Menu','Menu'], who:['Who’s playing?','Qui joue\u202F?'], pname:['Player name','Nom du joueur'], add:['Add','Ajouter'], start:['Start game','Commencer la partie'],
+  rules:[`<li>Single 1 = 100, single 5 = 50. Three of a kind = face × 100 (three 1s = 1 000), each extra die doubles it.</li>
+      <li>Straight of five = 500, straight of six = 1 000, three pairs = 500.</li>
+      <li>Hand full (every die scores): you must throw again.</li>
+      <li>500 in one turn to enter the game. Reach exactly 10 000 to win; going over scores nothing.</li>
+      <li>When a player stops, the next one can take over their points and leftover dice.</li>
+      <li>Once in the game, no score = a cross. Three in a row = −1 000.</li>`,
+    `<li>Un 1 = 100, un 5 = 50. Brelan = valeur × 100 (trois 1 = 1 000), chaque dé de plus double le score.</li>
+      <li>Suite de cinq = 500, suite de six = 1 000, trois paires = 500.</li>
+      <li>Main pleine (tous les dés marquent)\u202F: il faut relancer.</li>
+      <li>500 en un tour pour entrer dans la partie. Il faut faire 10 000 pile pour gagner\u202F; au-delà, rien n’est compté.</li>
+      <li>Quand un joueur s’arrête, le suivant peut reprendre ses points et les dés restants.</li>
+      <li>Une fois dans la partie, pas de score = une croix. Trois d’affilée = −1 000.</li>`],
+  scores:['Scores <small>(tap a player for their history)</small>','Scores <small>(touchez un joueur pour son historique)</small>'],
+  dice:['Dice','Dés'], close:['Close','Fermer'], done:['Done','OK'],
+  blehelp:['Close the GoDice app first: a die can only talk to one app at a time. Browsers open one Bluetooth window per die, so pick them one after another. Once connected, they’re remembered: next time, “Reconnect all dice” links them all in one tap.',
+    'Fermez d’abord l’appli GoDice\u202F: un dé ne peut parler qu’à une appli à la fois. Le navigateur ouvre une fenêtre Bluetooth par dé, choisissez-les l’un après l’autre. Une fois connectés, ils sont mémorisés\u202F: la prochaine fois, «\u202FReconnecter tous les dés\u202F» les relie tous d’un coup.'],
+  reconnect:['Reconnect all dice','Reconnecter tous les dés'], showall:['Dice not listed? Show all Bluetooth devices','Dés absents\u202F? Afficher tous les appareils Bluetooth'],
+  clear:['Clear','Effacer'], install:['Install as an app','Installer l’appli'],
+  installhint:['To install: open Chrome’s ⋮ menu, tap “Add to home screen”, then choose “Install”.','Pour installer\u202F: ouvrez le menu ⋮ de Chrome, touchez «\u202FAjouter à l’écran d’accueil\u202F», puis choisissez «\u202FInstaller\u202F».'],
+  reorder:['Change seating order','Changer l’ordre des joueurs'], undo:['Undo last turn','Annuler le dernier tour'], newgame:['New game','Nouvelle partie'],
+  seating:['Seating order','Ordre des joueurs'], seatinghelp:['Move players to match where they sit. Play continues with whoever’s turn it is now.','Déplacez les joueurs selon leur place autour de la table. Le joueur en cours garde son tour.'],
+};
+function applyLang(){
+  document.documentElement.lang = LANG;
+  document.querySelectorAll('[data-t]').forEach(el => { const v = STATIC[el.dataset.t]; if (v) el.innerHTML = tr(v[0], v[1]); });
+  document.querySelectorAll('[data-tp]').forEach(el => { const v = STATIC[el.dataset.tp]; if (v) el.placeholder = tr(v[0], v[1]); });
+  document.querySelectorAll('[data-lang]').forEach(b => b.classList.toggle('on', b.dataset.lang === LANG));
+}
 const fmt = n => (n < 0 ? '−' : '') + String(Math.abs(n)).replace(/\B(?=(\d{3})+(?!\d))/g, '\u202F');
 const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const plural = (n, a, b) => n === 1 ? a : b;
@@ -308,8 +347,8 @@ function countsParts(vals){
   const parts = [];
   for (let f = 1; f <= 6; f++){
     const n = c[f]; if (!n) continue;
-    if (n >= 3) parts.push({label:`${CNT[n]} ${f}s`, pts:(f === 1 ? 1000 : f * 100) * Math.pow(2, n - 3)});
-    else if (f === 1 || f === 5) parts.push({label: n === 1 ? `One ${f}` : `Two ${f}s`, pts:(f === 1 ? 100 : 50) * n});
+    if (n >= 3) parts.push({label: tr(`${CNT[n]} ${f}s`, n === 3 ? `Brelan de ${f}` : n === 4 ? `Carré de ${f}` : `${CNT_FR[n]} ${f}`), pts:(f === 1 ? 1000 : f * 100) * Math.pow(2, n - 3)});
+    else if (f === 1 || f === 5) parts.push({label: n === 1 ? tr(`One ${f}`, `Un ${f}`) : tr(`Two ${f}s`, `Deux ${f}`), pts:(f === 1 ? 100 : 50) * n});
     else return null;
   }
   return parts;
@@ -325,15 +364,15 @@ function scoreParts(vals){ // best breakdown using ALL given dice, [] if empty, 
   let best = countsParts(vals);
   const consider = c => { if (c && total(c) > total(best)) best = c; };
   if (vals.length === 6){
-    if ([...vals].sort().join('') === '123456') consider([{label:'Straight of six', pts:1000}]);
+    if ([...vals].sort().join('') === '123456') consider([{label:tr('Straight of six','Suite de six'), pts:1000}]);
     const c = {}; vals.forEach(v => c[v] = (c[v] || 0) + 1);
-    if (Object.values(c).every(n => n % 2 === 0)) consider([{label:'Three pairs', pts:500}]);
+    if (Object.values(c).every(n => n % 2 === 0)) consider([{label:tr('Three pairs','Trois paires'), pts:500}]);
   }
   if (vals.length >= 5){
     for (const run of [[1,2,3,4,5],[2,3,4,5,6]]){
       const rest = removeRun(vals, run); if (!rest) continue;
       const rp = rest.length ? countsParts(rest) : [];
-      if (rp) consider([{label:'Straight of five', pts:500}, ...rp]);
+      if (rp) consider([{label:tr('Straight of five','Suite de cinq'), pts:500}, ...rp]);
     }
   }
   return best;
@@ -370,11 +409,11 @@ function handleThrow(vals, isFix){
       if (vals.length === t.offer.dice && t.offer.dice !== ND) acceptOffer();
       else t.offer = null;
     }
-    if (t.diceLeft <= 0){ toast('No dice left. Stop to bank your points.'); return; }
+    if (t.diceLeft <= 0){ toast(tr('No dice left. Stop to bank your points.','Plus de dés. Arrêtez-vous pour marquer vos points.')); return; }
   }
   t.mustThrow = false;
   t.throw = vals;
-  t.note = vals.length !== t.diceLeft ? `${vals.length} ${plural(vals.length,'die','dice')} read, ${t.diceLeft} expected. Use “Fix it” if that’s wrong.` : '';
+  t.note = vals.length !== t.diceLeft ? [vals.length, t.diceLeft] : '';
   const best = bestSel(vals);
   clearBust();
   if (!best.length){ t.phase = 'bust'; t.sel = []; t.lost = t.points; startBust(); }
@@ -391,7 +430,7 @@ function clearBust(){ clearInterval(bustTimer); bustTimer = null;
 function autoKeep(){
   const t = S.turn;
   let sel = t.sel;
-  if (selPts() <= 0){ sel = bestSel(t.throw); toast('Kept the scoring dice for you'); }
+  if (selPts() <= 0){ sel = bestSel(t.throw); toast(tr('Kept the scoring dice for you','Dés qui marquent gardés pour vous')); }
   commitKeep(sel);
 }
 function commitKeep(sel, silent){
@@ -403,14 +442,14 @@ function commitKeep(sel, silent){
   t.log.push({dice:kept.sort(), pts:p});
   t.mustThrow = scoreVals(t.throw) > 0;
   if (t.diceLeft <= 0) t.diceLeft = ND;
-  if (t.mustThrow && !silent) toast('Hand full! You must throw again.');
+  if (t.mustThrow && !silent) toast(tr('Hand full! You must throw again.','Main pleine\u202F! Il faut relancer.'));
   t.throw = []; t.sel = []; t.phase = 'await'; t.note = '';
   return true;
 }
 function acceptOffer(){
   const t = S.turn, o = t.offer; if (!o) return;
   t.points = o.points; t.diceLeft = o.dice; t.from = o.from; t.inherited = o.points; t.offer = null;
-  toast(`Taking over ${o.from}’s +${fmt(o.points)}`);
+  toast(tr(`Taking over ${o.from}’s +${fmt(o.points)}`, `Reprise des +${fmt(o.points)} laissés par ${o.from}`));
 }
 function bankable(){
   const t = S.turn;
@@ -426,10 +465,10 @@ function pushHistory(){
 }
 function logEv(p, ev){ ev.p = S.players.indexOf(p); ev.score = p.score; ev.crosses = p.crosses; S.log.push(ev); }
 function addCross(p){
-  if (!p.inGame){ logEv(p, {kind:'miss'}); toast(`${p.name} isn’t in the game yet, no cross`); return; }
+  if (!p.inGame){ logEv(p, {kind:'miss'}); toast(tr(`${p.name} isn’t in the game yet, no cross`, `${p.name} n’est pas encore dans la partie, pas de croix`)); return; }
   p.crosses++;
-  if (p.crosses >= 3){ p.score -= 1000; p.crosses = 0; logEv(p, {kind:'penalty'}); toast(`${p.name}: third cross, −1\u202F000`); }
-  else { logEv(p, {kind:'cross', n:p.crosses}); toast(`${p.name} gets a cross (${p.crosses}/3)`); }
+  if (p.crosses >= 3){ p.score -= 1000; p.crosses = 0; logEv(p, {kind:'penalty'}); toast(tr(`${p.name}: third cross, −1\u202F000`, `${p.name}\u202F: troisième croix, −1\u202F000`)); }
+  else { logEv(p, {kind:'cross', n:p.crosses}); toast(tr(`${p.name} gets a cross (${p.crosses}/3)`, `${p.name} prend une croix (${p.crosses}/3)`)); }
 }
 function bank(){
   if (!canBank()) return;
@@ -437,12 +476,12 @@ function bank(){
   if (t.phase === 'decide') commitKeep(t.sel, true);
   pushHistory();
   const sum = p.score + t.points;
-  if (sum > TARGET){ logEv(p, {kind:'over', pts:t.points, inh:t.inherited}); toast(`${fmt(sum)} is over 10\u202F000, no score this turn`); }
+  if (sum > TARGET){ logEv(p, {kind:'over', pts:t.points, inh:t.inherited}); toast(tr(`${fmt(sum)} is over 10\u202F000, no score this turn`, `${fmt(sum)} dépasse 10\u202F000, rien n’est compté`)); }
   else {
     p.score = sum; p.crosses = 0; p.inGame = true;
     logEv(p, {kind:'bank', pts:t.points, inh:t.inherited, win:sum === TARGET});
     if (sum === TARGET) S.winner = p.name;
-    else toast(`${p.name} banks +${fmt(t.points)}`);
+    else toast(tr(`${p.name} banks +${fmt(t.points)}`, `${p.name} marque +${fmt(t.points)}`));
   }
   if (!S.winner) nextPlayer(t.diceLeft > 0 ? {from:p.name, points:t.points, dice:t.diceLeft} : null);
   save(); render();
@@ -454,12 +493,12 @@ function nextPlayer(offer){
 }
 function undo(){
   const snap = S.history.pop();
-  if (!snap){ toast('Nothing to undo'); return; }
+  if (!snap){ toast(tr('Nothing to undo','Rien à annuler')); return; }
   const o = JSON.parse(snap);
   clearBust();
   S.players = o.players; S.current = o.current; S.winner = null; S.turn = newTurn(); resetCollector();
   if (o.logLen != null) S.log.length = o.logLen;
-  toast(`Back to ${cur().name}’s turn`); save(); render();
+  toast(tr(`Back to ${cur().name}’s turn`, `Retour au tour de ${cur().name}`)); save(); render();
 }
 function startGame(names){
   S.players = names.map(n => ({name:n, score:0, crosses:0, inGame:false}));
@@ -479,7 +518,7 @@ function render(){
   $('setup').classList.toggle('hidden', S.started);
   $('game').classList.toggle('hidden', !S.started);
   $('bar').classList.toggle('hidden', !S.started);
-  $('menubtn').classList.toggle('hidden', !S.started);
+  document.querySelectorAll('.gameonly').forEach(el => el.classList.toggle('hidden', !S.started));
   if (!S.started){ renderSetup(); return; }
   renderBoard();
   if (S.winner){ renderWin(); return; }
@@ -487,16 +526,25 @@ function render(){
   const t = S.turn, p = cur();
   const live = t.points + (t.phase === 'decide' ? Math.max(0, selPts()) : 0);
   let dice = '', chips = '', guide = '', extra = '';
+  const allSix = tr('all six dice', 'les six dés');
 
   if (t.phase === 'await'){
     const n = t.offer ? ND : t.diceLeft;
     for (let i = 0; i < n; i++) dice += dieHTML(0, 'ghost' + (t.offer && i < t.offer.dice ? ' gold' : ''));
     if (t.offer){
-      extra = `<div class="offer"><strong>${esc(t.offer.from)}</strong> stopped with <strong>+${fmt(t.offer.points)}</strong> and ${t.offer.dice} ${plural(t.offer.dice,'die','dice')} left.<br>
-        <span class="sub">Take over and throw ${t.offer.dice === ND ? 'all six' : 'those ' + t.offer.dice}, or start fresh with all six.${t.offer.dice !== ND ? ' Throwing ' + t.offer.dice + ' dice takes over automatically.' : ''}</span></div>`;
-    } else if (t.mustThrow) guide = `<b>Hand full!</b> Throw ${t.diceLeft === ND ? 'all six dice' : 'the ' + t.diceLeft + ' remaining dice'} again.`;
-    else if (t.points === 0) guide = `Throw ${t.diceLeft === ND ? 'all six dice' : t.diceLeft + ' dice'}.`;
-    else guide = `Throw the <b>${t.diceLeft}</b> remaining ${plural(t.diceLeft,'die','dice')}, or stop.`;
+      const o = t.offer, k = o.dice;
+      extra = `<div class="offer">${tr(
+        `<strong>${esc(o.from)}</strong> stopped with <strong>+${fmt(o.points)}</strong> and ${k} ${dd(k)} left.`,
+        `<strong>${esc(o.from)}</strong> s’arrête avec <strong>+${fmt(o.points)}</strong> et ${k} ${dd(k)} restant${k > 1 ? 's' : ''}.`)}<br>
+        <span class="sub">${tr(
+          `Take over and throw ${k === ND ? 'all six' : 'those ' + k}, or start fresh with all six.${k !== ND ? ' Throwing ' + k + ' dice takes over automatically.' : ''}`,
+          `Reprenez et lancez ${k === ND ? 'les six' : 'ces ' + k}, ou repartez de zéro avec les six.${k !== ND ? ' Lancer ' + k + ' dés reprend automatiquement.' : ''}`)}</span></div>`;
+    } else if (t.mustThrow) guide = tr(
+      `<b>Hand full!</b> Throw ${t.diceLeft === ND ? allSix : 'the ' + t.diceLeft + ' remaining dice'} again.`,
+      `<b>Main pleine\u202F!</b> Relancez ${t.diceLeft === ND ? allSix : 'les ' + t.diceLeft + ' dés restants'}.`);
+    else if (t.points === 0) guide = tr(`Throw ${t.diceLeft === ND ? allSix : t.diceLeft + ' dice'}.`, `Lancez ${t.diceLeft === ND ? allSix : t.diceLeft + ' dés'}.`);
+    else guide = tr(`Throw the <b>${t.diceLeft}</b> remaining ${dd(t.diceLeft)}, or stop.`,
+      t.diceLeft === 1 ? 'Lancez le <b>dernier</b> dé, ou arrêtez-vous.' : `Lancez les <b>${t.diceLeft}</b> dés restants, ou arrêtez-vous.`);
   } else {
     const can = scoringDice(t.throw);
     const order = t.throw.map((v, i) => i).sort((a, b) => t.throw[a] - t.throw[b]);
@@ -509,92 +557,102 @@ function render(){
     }).join('');
     if (t.phase === 'decide'){
       const parts = scoreParts(selVals());
-      chips = parts === null ? '<span class="chip bad">That die doesn’t score on its own</span>' : chipsHTML(parts);
-      guide = (fullHand() ? '<b>Hand full!</b> Every die scores, so you must throw again. ' : '')
-        + (t.sel.length ? 'Gold dice are kept. Tap a die to keep or release it.' : 'Tap the dice you want to keep.');
+      chips = parts === null ? `<span class="chip bad">${tr('That die doesn’t score on its own', 'Ce dé ne marque pas seul')}</span>` : chipsHTML(parts);
+      guide = (fullHand() ? tr('<b>Hand full!</b> Every die scores, so you must throw again. ', '<b>Main pleine\u202F!</b> Tous les dés marquent, il faut relancer. ') : '')
+        + (t.sel.length ? tr('Gold dice are kept. Tap a die to keep or release it.', 'Les dés dorés sont gardés. Touchez un dé pour le garder ou le relâcher.')
+                        : tr('Tap the dice you want to keep.', 'Touchez les dés à garder.'));
     } else {
-      extra = `<p class="bustmsg">No score</p><p class="guide">${t.lost ? `+${fmt(t.lost)} lost. ` : ''}${p.inGame ? `Cross ${Math.min(3, p.crosses + 1)} of 3${p.crosses + 1 >= 3 ? ', −1\u202F000' : ''}.` : 'Not in the game yet, so no cross.'}</p>`;
+      const lost = t.lost ? tr(`+${fmt(t.lost)} lost. `, `+${fmt(t.lost)} perdus. `) : '';
+      const cross = p.inGame
+        ? tr(`Cross ${Math.min(3, p.crosses + 1)} of 3${p.crosses + 1 >= 3 ? ', −1\u202F000' : ''}.`, `Croix ${Math.min(3, p.crosses + 1)} sur 3${p.crosses + 1 >= 3 ? ', −1\u202F000' : ''}.`)
+        : tr('Not in the game yet, so no cross.', 'Pas encore dans la partie, donc pas de croix.');
+      extra = `<p class="bustmsg">${tr('No score', 'Raté\u202F!')}</p><p class="guide">${lost}${cross}</p>`;
     }
   }
   const railItems = [];
-  if (t.inherited) railItems.push(`<span class="inh">From ${esc(t.from)} +${fmt(t.inherited)}</span>`);
+  if (t.inherited) railItems.push(`<span class="inh">${tr('From', 'Repris à')} ${esc(t.from)} +${fmt(t.inherited)}</span>`);
   t.log.forEach(g => railItems.push(`<span class="grp">${g.dice.map(v => dieHTML(v, 'mini')).join('')}<em>+${fmt(g.pts)}</em></span>`));
-  const subline = `${fmt(p.score)} banked${p.inGame ? '' : `, needs ${fmt(ENTRY)} this turn to enter`}`;
+  const subline = tr(`${fmt(p.score)} banked${p.inGame ? '' : `, needs ${fmt(ENTRY)} this turn to enter`}`,
+                     `${fmt(p.score)} marqués${p.inGame ? '' : `, il faut ${fmt(ENTRY)} ce tour pour entrer`}`);
+  let note = '';
+  if (Array.isArray(t.note)) note = tr(`${t.note[0]} ${dd(t.note[0])} read, ${t.note[1]} expected. Use “Fix it” if that’s wrong.`,
+                                       `${t.note[0]} ${dd(t.note[0])} lu${t.note[0] > 1 ? 's' : ''}, ${t.note[1]} attendu${t.note[1] > 1 ? 's' : ''}. Touchez «\u202FCorriger\u202F» si c’est faux.`);
 
   $('tray').className = 'tray' + (t.phase === 'bust' ? ' isbust' : '');
   $('tray').innerHTML = `
     <div class="top">
       <div><div class="who">${esc(p.name)}</div><div class="sub">${subline}</div></div>
-      <div class="turn"><span class="sub">this turn</span><strong>+${fmt(live)}</strong></div>
+      <div class="turn"><span class="sub">${tr('this turn', 'ce tour')}</span><strong>+${fmt(live)}</strong></div>
     </div>
     <div class="dice-row">${dice}</div>
     ${t.phase === 'decide' ? `<div class="chips">${chips}</div>` : ''}
     ${guide ? `<p class="guide">${guide}</p>` : ''}${extra}
-    ${t.note ? `<p class="note">${t.note}</p>` : ''}
-    ${t.phase === 'decide' || t.phase === 'bust' ? '<button class="fix" data-act="fix">Wrong reading? Fix it</button>' : ''}
+    ${note ? `<p class="note">${note}</p>` : ''}
+    ${t.phase === 'decide' || t.phase === 'bust' ? `<button class="fix" data-act="fix">${tr('Wrong reading? Fix it', 'Mauvaise lecture\u202F? Corriger')}</button>` : ''}
     ${railItems.length ? `<div class="rail">${railItems.join('')}</div>` : ''}`;
   renderBar();
 }
 function stopButton(){
   const p = cur(), b = bankable(), sum = p.score + Math.max(0, b);
-  let label = 'Stop', small = `bank +${fmt(Math.max(0, b))}`;
-  if (fullHand()) small = 'hand full, throw again';
-  else if (b > 0 && !p.inGame && b < ENTRY) small = `needs ${fmt(ENTRY)} to enter`;
-  else if (b > 0 && sum > TARGET) small = 'over 10\u202F000, scores nothing';
-  else if (b > 0 && sum === TARGET){ label = 'Stop and win'; small = 'exactly 10\u202F000'; }
+  let label = tr('Stop', 'Stop'), small = tr(`bank +${fmt(Math.max(0, b))}`, `marquer +${fmt(Math.max(0, b))}`);
+  if (fullHand()) small = tr('hand full, throw again', 'main pleine, relancez');
+  else if (b > 0 && !p.inGame && b < ENTRY) small = tr(`needs ${fmt(ENTRY)} to enter`, `il faut ${fmt(ENTRY)} pour entrer`);
+  else if (b > 0 && sum > TARGET) small = tr('over 10\u202F000, scores nothing', 'dépasse 10\u202F000, rien n’est compté');
+  else if (b > 0 && sum === TARGET){ label = tr('Stop and win', 'Stop et victoire'); small = tr('exactly 10\u202F000', '10\u202F000 pile'); }
   return `<button class="primary" data-act="bank" ${canBank() ? '' : 'disabled'}>${label}<small>${small}</small></button>`;
 }
 function renderBar(){
   const t = S.turn;
   let h = '';
   if (t.phase === 'await' && t.offer){
-    h = `<button class="goldbtn" data-act="take">Take over<small>+${fmt(t.offer.points)}, ${t.offer.dice} ${plural(t.offer.dice,'die','dice')}</small></button>
-         <button class="ghost" data-act="fresh">Start fresh<small>all six dice</small></button>`;
+    h = `<button class="goldbtn" data-act="take">${tr('Take over', 'Reprendre')}<small>+${fmt(t.offer.points)}, ${t.offer.dice} ${dd(t.offer.dice)}</small></button>
+         <button class="ghost" data-act="fresh">${tr('Start fresh', 'Repartir de zéro')}<small>${tr('all six dice', 'les six dés')}</small></button>`;
   } else if (t.phase === 'await'){
-    const left = t.diceLeft === 0 ? 'no dice left' : `throw ${t.diceLeft} ${plural(t.diceLeft,'die','dice')}`;
+    const left = t.diceLeft === 0 ? tr('no dice left', 'plus de dés') : tr(`throw ${t.diceLeft} ${dd(t.diceLeft)}`, `lancer ${t.diceLeft} ${dd(t.diceLeft)}`);
     h = t.points > 0
-      ? `<button class="ghost" data-act="type">Type a throw<small>${left}</small></button>${stopButton()}`
-      : `<button class="ghost wide" data-act="type">Throw the dice, or type a throw</button>`;
+      ? `<button class="ghost" data-act="type">${tr('Type a throw', 'Saisir un lancer')}<small>${left}</small></button>${stopButton()}`
+      : `<button class="ghost wide" data-act="type">${tr('Throw the dice, or type a throw', 'Lancez les dés, ou saisissez un lancer')}</button>`;
   } else if (t.phase === 'decide'){
     const left = t.diceLeft - t.sel.length;
-    const rest = left <= 0 ? 'then throw all six' : `then throw ${left}`;
-    h = `<button class="ghost" data-act="keep" ${selPts() > 0 ? '' : 'disabled'}>Keep<small>${rest}</small></button>${stopButton()}`;
+    const rest = left <= 0 ? tr('then throw all six', 'puis relancer les six') : tr(`then throw ${left}`, `puis lancer ${left}`);
+    h = `<button class="ghost" data-act="keep" ${selPts() > 0 ? '' : 'disabled'}>${tr('Keep', 'Garder')}<small>${rest}</small></button>${stopButton()}`;
   } else if (t.phase === 'bust'){
-    h = `<button class="danger wide" data-act="bust">Next player<small>${esc(nextName())}${bustTimer ? `, automatically in ${bustLeft}\u202Fs (or just throw)` : ''}</small></button>`;
+    const auto = bustTimer ? tr(`, automatically in ${bustLeft}\u202Fs (or just throw)`, `, automatiquement dans ${bustLeft}\u202Fs (ou lancez directement)`) : '';
+    h = `<button class="danger wide" data-act="bust">${tr('Next player', 'Joueur suivant')}<small>${esc(nextName())}${auto}</small></button>`;
   }
   $('barin').innerHTML = h;
 }
 function renderWin(){
   $('tray').className = 'tray';
-  $('tray').innerHTML = `<div class="win"><strong>${esc(S.winner)} wins!</strong><span class="sub">Exactly 10\u202F000.</span></div>`;
-  $('barin').innerHTML = `<button class="goldbtn" data-act="rematch">Rematch<small>same players</small></button><button class="ghost" data-act="newplayers">New game<small>change players</small></button>`;
+  $('tray').innerHTML = `<div class="win"><strong>${tr(`${esc(S.winner)} wins!`, `${esc(S.winner)} gagne\u202F!`)}</strong><span class="sub">${tr('Exactly 10\u202F000.', '10\u202F000 pile.')}</span></div>`;
+  $('barin').innerHTML = `<button class="goldbtn" data-act="rematch">${tr('Rematch', 'Revanche')}<small>${tr('same players', 'mêmes joueurs')}</small></button><button class="ghost" data-act="newplayers">${tr('New game', 'Nouvelle partie')}<small>${tr('change players', 'changer de joueurs')}</small></button>`;
 }
 function renderBoard(){
   $('board').innerHTML = S.players.map((p, i) => `
-    <li class="row ${i === S.current && !S.winner ? 'current' : ''}" data-p="${i}" tabindex="0" role="button" aria-label="${esc(p.name)}, history">
+    <li class="row ${i === S.current && !S.winner ? 'current' : ''}" data-p="${i}" tabindex="0" role="button" aria-label="${esc(p.name)}, ${tr('history', 'historique')}">
       <span class="pos">${i + 1}</span>
-      <div class="name">${esc(p.name)}${p.inGame ? '' : `<small>not in yet</small>`}</div>
-      <div class="crosses" aria-label="${p.crosses} ${plural(p.crosses,'cross','crosses')}">${[0,1,2].map(k => `<i class="${k < p.crosses ? 'on' : ''}">✕</i>`).join('')}</div>
+      <div class="name">${esc(p.name)}${p.inGame ? '' : `<small>${tr('not in yet', 'pas encore entré')}</small>`}</div>
+      <div class="crosses" aria-label="${p.crosses} ${tr(plural(p.crosses,'cross','crosses'), 'croix')}">${[0,1,2].map(k => `<i class="${k < p.crosses ? 'on' : ''}">✕</i>`).join('')}</div>
       <div class="score ${p.score < 0 ? 'neg' : ''}">${fmt(p.score)}</div>
       <div class="bar"><b style="width:${Math.max(0, Math.min(100, p.score / TARGET * 100))}%"></b></div>
     </li>`).join('');
 }
 function renderSetup(){
   $('plist').innerHTML = S.names.map((n, i) => `<li>${esc(n)}<span class="obtns">
-      <button class="mv" data-up="${i}" ${i ? '' : 'disabled'} aria-label="Move ${esc(n)} up">↑</button>
-      <button class="mv" data-down="${i}" ${i < S.names.length - 1 ? '' : 'disabled'} aria-label="Move ${esc(n)} down">↓</button>
-      <button data-rm="${i}" aria-label="Remove ${esc(n)}">Remove</button></span></li>`).join('')
-    || '<li class="empty">Add at least two players.</li>';
+      <button class="mv" data-up="${i}" ${i ? '' : 'disabled'} aria-label="${tr('Move up', 'Monter')}: ${esc(n)}">↑</button>
+      <button class="mv" data-down="${i}" ${i < S.names.length - 1 ? '' : 'disabled'} aria-label="${tr('Move down', 'Descendre')}: ${esc(n)}">↓</button>
+      <button data-rm="${i}" aria-label="${tr('Remove', 'Retirer')}: ${esc(n)}">${tr('Remove', 'Retirer')}</button></span></li>`).join('')
+    || `<li class="empty">${tr('Add at least two players.', 'Ajoutez au moins deux joueurs.')}</li>`;
   $('start').disabled = S.names.length < 2;
 }
 
 function evText(e){
-  const inh = e.inh ? `<small>incl. ${fmt(e.inh)} taken over</small>` : '';
-  if (e.kind === 'bank') return e.win ? `+${fmt(e.pts)}, wins!${inh}` : `+${fmt(e.pts)}${inh}`;
-  if (e.kind === 'over') return `<span class="x">+${fmt(e.pts)} over 10\u202F000</span><small>not counted</small>`;
-  if (e.kind === 'cross') return `<span class="x">✕ Cross ${e.n} of 3</span>`;
-  if (e.kind === 'penalty') return `<span class="x">✕ Third cross, −1\u202F000</span>`;
-  return 'No score<small>not in the game yet</small>';
+  const inh = e.inh ? `<small>${tr(`incl. ${fmt(e.inh)} taken over`, `dont ${fmt(e.inh)} repris`)}</small>` : '';
+  if (e.kind === 'bank') return e.win ? `+${fmt(e.pts)}, ${tr('wins!', 'victoire\u202F!')}${inh}` : `+${fmt(e.pts)}${inh}`;
+  if (e.kind === 'over') return `<span class="x">+${fmt(e.pts)} ${tr('over 10\u202F000', 'au-delà de 10\u202F000')}</span><small>${tr('not counted', 'non compté')}</small>`;
+  if (e.kind === 'cross') return `<span class="x">✕ ${tr(`Cross ${e.n} of 3`, `Croix ${e.n} sur 3`)}</span>`;
+  if (e.kind === 'penalty') return `<span class="x">✕ ${tr('Third cross, −1\u202F000', 'Troisième croix, −1\u202F000')}</span>`;
+  return `${tr('No score', 'Pas de score')}<small>${tr('not in the game yet', 'pas encore dans la partie')}</small>`;
 }
 function renderHist(i){
   const p = S.players[i]; if (!p) return;
@@ -609,17 +667,17 @@ function renderHist(i){
   const line = pts.map((v, k) => `${X(k).toFixed(1)},${Y(v).toFixed(1)}`).join(' ');
   const dots = evs.map((e, k) => e.kind === 'cross' || e.kind === 'penalty' || e.kind === 'over'
     ? `<circle cx="${X(k + 1).toFixed(1)}" cy="${Y(e.score).toFixed(1)}" r="3.5" fill="var(--bust)"/>` : '').join('');
-  const chart = evs.length ? `<svg class="chart" viewBox="0 0 300 110" preserveAspectRatio="none" role="img" aria-label="Score over turns">
+  const chart = evs.length ? `<svg class="chart" viewBox="0 0 300 110" preserveAspectRatio="none" role="img" aria-label="${tr('Score over turns', 'Score au fil des tours')}">
       ${lo < 0 ? `<line x1="0" x2="300" y1="${Y(0)}" y2="${Y(0)}" stroke="var(--line)" stroke-dasharray="4 4"/>` : ''}
       <polyline points="${line}" fill="none" stroke="var(--felt)" stroke-width="2.5" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>${dots}</svg>` : '';
   $('histbody').innerHTML = `
     <div class="stats">
-      <div><strong>${fmt(p.score)}</strong><span>score</span></div>
-      <div><strong>${crossN}</strong><span>${plural(crossN,'cross','crosses')} in total</span></div>
-      <div><strong>${best ? '+' + fmt(best) : '–'}</strong><span>best turn</span></div>
+      <div><strong>${fmt(p.score)}</strong><span>${tr('score', 'score')}</span></div>
+      <div><strong>${crossN}</strong><span>${tr(`${plural(crossN,'cross','crosses')} in total`, 'croix au total')}</span></div>
+      <div><strong>${best ? '+' + fmt(best) : '–'}</strong><span>${tr('best turn', 'meilleur tour')}</span></div>
     </div>${chart}
-    <ul class="hlist">${evs.length ? evs.map((e, k) => `<li><span class="t">Turn ${k + 1}</span><span class="d">${evText(e)}</span><span class="s">${fmt(e.score)}</span></li>`).reverse().join('')
-      : '<li class="empty">No turns played yet.</li>'}</ul>`;
+    <ul class="hlist">${evs.length ? evs.map((e, k) => `<li><span class="t">${tr('Turn', 'Tour')} ${k + 1}</span><span class="d">${evText(e)}</span><span class="s">${fmt(e.score)}</span></li>`).reverse().join('')
+      : `<li class="empty">${tr('No turns played yet.', 'Aucun tour joué pour l’instant.')}</li>`}</ul>`;
   $('dlgHist').showModal();
 }
 $('board').addEventListener('click', e => { const r = e.target.closest('[data-p]'); if (r) renderHist(+r.dataset.p); });
@@ -650,7 +708,7 @@ document.addEventListener('click', e => {
 });
 function addPlayer(){
   const n = $('pname').value.trim(); if (!n) return;
-  if (S.names.length >= 8){ toast('8 players maximum'); return; }
+  if (S.names.length >= 8){ toast(tr('8 players maximum','8 joueurs maximum')); return; }
   S.names.push(n); $('pname').value = ''; save(); renderSetup(); $('pname').focus();
 }
 $('padd').onclick = addPlayer;
@@ -688,19 +746,19 @@ function renderOrder(){
   const n = S.players.length;
   $('olist').innerHTML = S.players.map((p, i) => `<li class="${i === S.current && !S.winner ? 'cur' : ''}">
     <span class="pos">${i + 1}</span><span class="n">${esc(p.name)}</span>
-    <button class="mv" data-mu="${i}" ${i ? '' : 'disabled'} aria-label="Move ${esc(p.name)} up">↑</button>
-    <button class="mv" data-md="${i}" ${i < n - 1 ? '' : 'disabled'} aria-label="Move ${esc(p.name)} down">↓</button></li>`).join('');
+    <button class="mv" data-mu="${i}" ${i ? '' : 'disabled'} aria-label="${tr('Move up', 'Monter')}: ${esc(p.name)}">↑</button>
+    <button class="mv" data-md="${i}" ${i < n - 1 ? '' : 'disabled'} aria-label="${tr('Move down', 'Descendre')}: ${esc(p.name)}">↓</button></li>`).join('');
 }
 $('olist').addEventListener('click', e => {
   const b = e.target.closest('button'); if (!b) return;
   if (b.dataset.mu != null) movePlayer(+b.dataset.mu, -1);
   if (b.dataset.md != null) movePlayer(+b.dataset.md, 1);
 });
-$('newgame').onclick = () => { if (confirm('End this game and start a new one?')){ $('dlgOpts').close(); S.started = false; S.winner = null; S.history = []; save(); render(); } };
+$('newgame').onclick = () => { if (confirm(tr('End this game and start a new one?','Terminer cette partie et en commencer une nouvelle\u202F?'))){ $('dlgOpts').close(); S.started = false; S.winner = null; S.history = []; save(); render(); } };
 
 /* ---------- Manual entry ---------- */
 const pad = {mode:'new', vals:[]};
-$('pad').innerHTML = [1,2,3,4,5,6].map(v => `<button data-v="${v}" aria-label="Add a ${v}">${dieHTML(v)}</button>`).join('');
+$('pad').innerHTML = [1,2,3,4,5,6].map(v => `<button data-v="${v}" aria-label="${v}">${dieHTML(v)}</button>`).join('');
 $('pad').addEventListener('click', e => { const v = +e.target.closest('[data-v]')?.dataset.v; if (v && pad.vals.length < ND){ pad.vals.push(v); renderPad(); } });
 $('padvals').addEventListener('click', e => { const d = e.target.closest('[data-pi]'); if (d){ pad.vals.splice(+d.dataset.pi, 1); renderPad(); } });
 $('padclear').onclick = () => { pad.vals = []; renderPad(); };
@@ -712,11 +770,11 @@ $('padsubmit').onclick = () => {
 };
 function openPad(){ renderPad(); $('dlgPad').showModal(); }
 function renderPad(){
-  $('padtitle').textContent = pad.mode === 'fix' ? 'Fix the throw' : 'Type a throw';
+  $('padtitle').textContent = pad.mode === 'fix' ? tr('Fix the throw', 'Corriger le lancer') : tr('Type a throw', 'Saisir un lancer');
   $('padvals').innerHTML = pad.vals.length ? pad.vals.map((v, i) => dieHTML(v, '', `data-pi="${i}"`)).join('')
-    : '<span class="hint">Tap the faces below. Tap a die here to remove it.</span>';
+    : `<span class="hint">${tr('Tap the faces below. Tap a die here to remove it.', 'Touchez les faces ci-dessous. Touchez un dé ici pour le retirer.')}</span>`;
   $('padsubmit').disabled = !pad.vals.length;
-  $('padsubmit').textContent = pad.mode === 'fix' ? 'Replace throw' : 'Use this throw';
+  $('padsubmit').textContent = pad.mode === 'fix' ? tr('Replace throw', 'Remplacer le lancer') : tr('Use this throw', 'Valider ce lancer');
 }
 
 /* ---------- Toast ---------- */
@@ -731,7 +789,7 @@ const SVC = '6e400001-b5a3-f393-e0a9-e50e24dcca9e';
 const WRITE = '6e400002-b5a3-f393-e0a9-e50e24dcca9e';
 const NOTIFY = '6e400003-b5a3-f393-e0a9-e50e24dcca9e';
 const VEC = {1:[-64,0,0], 2:[0,0,64], 3:[0,64,0], 4:[0,-64,0], 5:[0,0,-64], 6:[64,0,0]};
-const COLORS = [['Black','#222'],['Red','#D3302A'],['Green','#2E9E4F'],['Blue','#2F6FD6'],['Yellow','#F2C230'],['Orange','#F08A24']];
+const COLORS = [['Black','#222','noir'],['Red','#D3302A','rouge'],['Green','#2E9E4F','vert'],['Blue','#2F6FD6','bleu'],['Yellow','#F2C230','jaune'],['Orange','#F08A24','orange']];
 const dice = [];
 const rolling = new Set(), pending = new Map();
 let flushTimer, safetyTimer;
@@ -790,27 +848,27 @@ async function setupDie(die, quiet){
     await send(die, [16, 2, 10, 10, 0, 255, 0, 1, 0]);
   } catch(e){
     die.status = 'disconnected'; renderDice();
-    if (!quiet) $('blehelp').innerHTML = '<strong>Couldn’t connect.</strong> Shake the die to wake it and try again. ' + esc(e.name + ': ' + e.message);
+    if (!quiet) $('blehelp').innerHTML = tr('<strong>Couldn’t connect.</strong> Shake the die to wake it and try again. ', '<strong>Connexion impossible.</strong> Secouez le dé pour le réveiller et réessayez. ') + esc(e.name + ': ' + e.message);
   }
 }
 async function connectDie(all){
   if (!navigator.bluetooth){ bleUnavailable(); return; }
   try {
     if (navigator.bluetooth.getAvailability && !(await navigator.bluetooth.getAvailability())){
-      $('blehelp').innerHTML = '<strong>Bluetooth looks off or unavailable.</strong> Turn on Bluetooth (and Location on older Android), and give Chrome the “Nearby devices” permission.';
+      $('blehelp').innerHTML = tr('<strong>Bluetooth looks off or unavailable.</strong> Turn on Bluetooth (and Location on older Android), and give Chrome the “Nearby devices” permission.', '<strong>Le Bluetooth semble désactivé ou indisponible.</strong> Activez le Bluetooth (et la localisation sur les anciens Android), et donnez à Chrome l’autorisation «\u202FAppareils à proximité\u202F».');
       return;
     }
     const exclude = dice.filter(d => d.status === 'ready' && d.name).map(d => ({name:d.name}));
     const opts = all ? {acceptAllDevices:true, optionalServices:[SVC]} : {filters:[{namePrefix:'GoDice'}], optionalServices:[SVC]};
     if (!all && exclude.length) opts.exclusionFilters = exclude;
     const device = await navigator.bluetooth.requestDevice(opts);
-    if (dice.find(d => d.id === device.id && d.status === 'ready')){ toast('That die is already connected'); return; }
+    if (dice.find(d => d.id === device.id && d.status === 'ready')){ toast(tr('That die is already connected','Ce dé est déjà connecté')); return; }
     await attachDevice(device, false);
   } catch(e){
     if (e.name === 'NotFoundError') return;
     if (e.name === 'SecurityError' || e.name === 'NotAllowedError')
-      $('blehelp').innerHTML = '<strong>Bluetooth is blocked in this view.</strong> Open this page on its own (hosted over https), not inside claude.ai. Typing throws still works here.<br><small>' + esc(e.name + ': ' + e.message) + '</small>';
-    else $('blehelp').innerHTML = '<strong>Bluetooth error.</strong> ' + esc(e.name + ': ' + e.message);
+      $('blehelp').innerHTML = tr('<strong>Bluetooth is blocked in this view.</strong> Open this page on its own (hosted over https), not inside claude.ai. Typing throws still works here.', '<strong>Le Bluetooth est bloqué ici.</strong> Ouvrez cette page seule (hébergée en https), pas dans claude.ai. La saisie des lancers fonctionne quand même.') + '<br><small>' + esc(e.name + ': ' + e.message) + '</small>';
+    else $('blehelp').innerHTML = tr('<strong>Bluetooth error.</strong> ', '<strong>Erreur Bluetooth.</strong> ') + esc(e.name + ': ' + e.message);
   }
 }
 function attachDie(device){
@@ -838,27 +896,27 @@ async function connectSaved(silent){
   let devs = [];
   try { devs = (await navigator.bluetooth.getDevices()).filter(d => (d.name || '').startsWith('GoDice')); } catch(e){ return; }
   $('connectsaved').classList.toggle('hidden', !devs.length);
-  if (!devs.length){ if (!silent) toast('No saved dice yet. Connect them once first.'); return; }
-  if (!silent) toast(`Reconnecting ${devs.length} ${plural(devs.length,'die','dice')}…`);
+  if (!devs.length){ if (!silent) toast(tr('No saved dice yet. Connect them once first.','Aucun dé mémorisé. Connectez-les une première fois.')); return; }
+  if (!silent) toast(tr(`Reconnecting ${devs.length} ${dd(devs.length)}…`, `Reconnexion de ${devs.length} ${dd(devs.length)}…`));
   await Promise.all(devs.map(d => attachDevice(d, true)));
 }
 function bleUnavailable(){
-  $('blehelp').innerHTML = '<strong>This browser can’t reach Bluetooth dice.</strong> On Android use Chrome. On iPhone use the Bluefy browser. You can still type throws.';
+  $('blehelp').innerHTML = tr('<strong>This browser can’t reach Bluetooth dice.</strong> On Android use Chrome. On iPhone use the Bluefy browser. You can still type throws.', '<strong>Ce navigateur ne peut pas joindre les dés Bluetooth.</strong> Sur Android, utilisez Chrome. Sur iPhone, le navigateur Bluefy. Vous pouvez toujours saisir les lancers.');
 }
 function renderDice(){
   const ready = dice.filter(d => d.status === 'ready').length;
   const btn = $('dicebtn');
-  btn.textContent = ready ? `${ready} ${plural(ready,'die','dice')}` : 'Connect dice';
+  btn.textContent = ready ? `${ready} ${dd(ready)}` : tr('Connect dice', 'Connecter les dés');
   btn.classList.toggle('live', ready > 0);
   $('dielist').innerHTML = dice.map((d, i) => {
     const c = COLORS[d.color] || ['', 'transparent'];
-    const state = d.status === 'ready' ? (d.rolling ? 'Rolling…' : d.value ? `Showing ${d.value}` : 'Ready') : d.status === 'connecting' ? 'Connecting…' : d.status === 'waiting' ? 'Waiting for it, shake the die' : 'Disconnected';
+    const state = d.status === 'ready' ? (d.rolling ? tr('Rolling…', 'Roule…') : d.value ? tr(`Showing ${d.value}`, `Affiche ${d.value}`) : tr('Ready', 'Prêt')) : d.status === 'connecting' ? tr('Connecting…', 'Connexion…') : d.status === 'waiting' ? tr('Waiting for it, shake the die', 'En attente, secouez le dé') : tr('Disconnected', 'Déconnecté');
     return `<li><span class="dot" style="background:${c[1]}"></span>
-      <div class="grow">${esc(c[0] ? c[0] + ' die' : d.name)}<small>${state}${d.battery != null ? `, battery ${d.battery}%` : ''}</small></div>
-      ${d.status === 'disconnected' ? `<button class="ghost" data-rc="${i}">Reconnect</button>` : ''}
-      <button class="ghost" data-dc="${i}">Remove</button></li>`;
+      <div class="grow">${esc(c[0] ? tr(c[0] + ' die', 'Dé ' + c[2]) : d.name)}<small>${state}${d.battery != null ? tr(`, battery ${d.battery}%`, `, batterie ${d.battery}\u202F%`) : ''}</small></div>
+      ${d.status === 'disconnected' ? `<button class="ghost" data-rc="${i}">${tr('Reconnect', 'Reconnecter')}</button>` : ''}
+      <button class="ghost" data-dc="${i}">${tr('Remove', 'Retirer')}</button></li>`;
   }).join('');
-  $('connect').textContent = ready ? `Connect another die (${ready} linked)` : 'Connect a die';
+  $('connect').textContent = ready ? tr(`Connect another die (${ready} linked)`, `Connecter un autre dé (${ready} relié${ready > 1 ? 's' : ''})`) : tr('Connect a die', 'Connecter un dé');
 }
 $('connect').onclick = () => connectDie(false);
 $('connectall').onclick = () => connectDie(true);
@@ -869,8 +927,16 @@ $('dielist').addEventListener('click', e => {
   if (dc != null){ const d = dice[+dc]; try { d.device.gatt.disconnect(); } catch(_){} rolling.delete(d.id); dice.splice(+dc, 1); renderDice(); }
 });
 if (!navigator.bluetooth) bleUnavailable();
-else if (window.self !== window.top) $('blehelp').innerHTML += '<br><small>This page is running inside another page. If connecting fails, open it on its own.</small>';
+else if (window.self !== window.top) $('blehelp').innerHTML += tr('<br><small>This page is running inside another page. If connecting fails, open it on its own.</small>', '<br><small>Cette page tourne dans une autre page. Si la connexion échoue, ouvrez-la seule.</small>');
 
+function setLang(l){
+  LANG = l; try { localStorage.setItem('dixmille-lang', l); } catch(e) {}
+  applyLang(); render(); renderDice(); renderPad();
+  if (!navigator.bluetooth) bleUnavailable();
+}
+document.querySelectorAll('[data-lang]').forEach(b => b.onclick = () => setLang(b.dataset.lang));
+applyLang();
+if (!navigator.bluetooth) bleUnavailable();
 render(); renderDice();
 connectSaved(true);
 
@@ -879,13 +945,15 @@ if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.
   navigator.serviceWorker.register('sw.js').catch(() => {});
 }
 let installEvt = null;
-window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); installEvt = e; $('installbtn').classList.remove('hidden'); });
+const standalone = matchMedia('(display-mode: standalone)').matches || navigator.standalone;
+if (standalone) $('installhint').classList.add('hidden');
+window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); installEvt = e; $('installbtn').classList.remove('hidden'); $('installhint').classList.add('hidden'); });
 $('installbtn').onclick = async () => {
   if (!installEvt) return;
   $('dlgOpts').close(); installEvt.prompt();
   await installEvt.userChoice; installEvt = null; $('installbtn').classList.add('hidden');
 };
-window.addEventListener('appinstalled', () => toast('Installed. Open 10 000 from your home screen.'));
+window.addEventListener('appinstalled', () => toast(tr('Installed. Open 10 000 from your home screen.','Installée. Ouvrez 10 000 depuis votre écran d’accueil.')));
 })();
 </script>
 </body>
