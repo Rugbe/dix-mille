@@ -138,6 +138,14 @@ button.die{padding:6px; border-radius:22%}
 .plist button{padding:4px 10px; color:var(--muted)}
 .addrow{display:flex; gap:8px; margin-bottom:14px}
 input[type=text]{flex:1; min-width:0; font:inherit; padding:12px 14px; border-radius:12px; border:1.5px solid var(--line); background:var(--bg); color:var(--ink)}
+.rulesbox{margin-top:18px; padding-top:14px; border-top:1.5px solid var(--line)}
+.dlg .rulesbox{margin:0 0 12px; padding-top:0; border-top:0}
+.rulesbox h3{margin:0 0 6px; font-size:1rem}
+.rule{display:flex; align-items:center; justify-content:space-between; gap:10px; padding:8px 0}
+.rule span{font-size:.95rem}
+.seg{display:flex; flex:none; background:var(--bg); border-radius:12px; padding:3px}
+.seg button{padding:8px 12px; border-radius:9px; font-weight:600; color:var(--muted)}
+.seg button.on{background:var(--btn); color:var(--btn-ink)}
 .rules{font-size:.88rem; color:var(--muted); margin:16px 0 0; padding-left:18px}
 .rules li{margin-bottom:4px}
 
@@ -220,14 +228,15 @@ dialog::backdrop{background:rgba(0,0,0,.5)}
       <button class="ghost" id="padd" data-t="add">Add</button>
     </div>
     <button class="primary" id="start" style="width:100%" data-t="start">Start game</button>
-    <ul class="rules" data-t="rules">
-      <li>Single 1 = 100, single 5 = 50. Three of a kind = face × 100 (three 1s = 1 000), each extra die doubles it.</li>
-      <li>Straight of five = 500, straight of six = 1 000, three pairs = 500.</li>
-      <li>Hand full (every die scores): you must throw again.</li>
-      <li>500 in one turn to enter the game. Reach exactly 10 000 to win; going over scores nothing.</li>
-      <li>When a player stops, the next one can take over their points and leftover dice.</li>
-      <li>Once in the game, no score = a cross. Three in a row = −1 000.</li>
-    </ul>
+    <div class="rulesbox">
+      <h3 data-t="rulestitle">Game rules</h3>
+      <div class="rule"><span data-t="r_entry">Points to enter the game</span>
+        <div class="seg" data-rule="entry"><button data-v="500">500</button><button data-v="1000">1 000</button></div></div>
+      <div class="rule"><span data-t="r_s5">Straight of five dice</span>
+        <div class="seg" data-rule="s5"><button data-v="500">500</button><button data-v="1000">1 000</button></div></div>
+      <div class="rule"><span data-t="r_s6">Straight of six dice</span>
+        <div class="seg" data-rule="s6"><button data-v="1000">1 000</button><button data-v="1500">1 500</button></div></div>
+    </div>
   </section>
 
   <div id="game" class="hidden">
@@ -263,6 +272,15 @@ dialog::backdrop{background:rgba(0,0,0,.5)}
   <div class="langrow" role="group" aria-label="Language"><button class="ghost" data-lang="fr">Français</button><button class="ghost" data-lang="en">English</button></div>
   <button class="goldbtn full hidden" id="installbtn" style="margin:0 0 8px" data-t="install">Install as an app</button>
   <p id="installhint" data-t="installhint">To install: open Chrome’s ⋮ menu, tap “Add to home screen”, then choose “Install”.</p>
+  <div class="gameonly"><div class="rulesbox">
+      <h3 data-t="rulestitle">Game rules</h3>
+      <div class="rule"><span data-t="r_entry">Points to enter the game</span>
+        <div class="seg" data-rule="entry"><button data-v="500">500</button><button data-v="1000">1 000</button></div></div>
+      <div class="rule"><span data-t="r_s5">Straight of five dice</span>
+        <div class="seg" data-rule="s5"><button data-v="500">500</button><button data-v="1000">1 000</button></div></div>
+      <div class="rule"><span data-t="r_s6">Straight of six dice</span>
+        <div class="seg" data-rule="s6"><button data-v="1000">1 000</button><button data-v="1500">1 500</button></div></div>
+    </div></div>
   <button class="ghost full gameonly" id="reorder" style="margin:0 0 8px" data-t="reorder">Change seating order</button>
   <div class="row2 gameonly">
     <button class="ghost" id="undo" data-t="undo">Undo last turn</button>
@@ -285,7 +303,7 @@ dialog::backdrop{background:rgba(0,0,0,.5)}
 
 <script>
 (() => {
-const TARGET = 10000, ENTRY = 500, ND = 6, KEY = 'dixmille-v2';
+const TARGET = 10000, ND = 6, KEY = 'dixmille-v2';
 const PIPS = {1:[4],2:[0,8],3:[0,4,8],4:[0,2,6,8],5:[0,2,4,6,8],6:[0,2,3,5,6,8]};
 const CNT = ['','One','Two','Three','Four','Five','Six'], CNT_FR = ['','Un','Deux','Trois','Quatre','Cinq','Six'];
 const $ = id => document.getElementById(id);
@@ -294,7 +312,9 @@ try { LANG = localStorage.getItem('dixmille-lang') || ((navigator.language || ''
 const tr = (en, fr) => LANG === 'fr' ? fr : en;
 const dd = n => tr(n === 1 ? 'die' : 'dice', n === 1 ? 'dé' : 'dés');
 const STATIC = {
-  menu:['Menu','Menu'], who:['Who’s playing?','Qui joue\u202F?'], pname:['Player name','Nom du joueur'], add:['Add','Ajouter'], start:['Start game','Commencer la partie'],
+  menu:['Menu','Menu'],
+  rulestitle:['Game rules','Règles de la partie'], r_entry:['Points to enter the game','Points pour entrer dans la partie'],
+  r_s5:['Straight of five dice','Suite de cinq dés'], r_s6:['Straight of six dice','Suite de six dés'], who:['Who’s playing?','Qui joue\u202F?'], pname:['Player name','Nom du joueur'], add:['Add','Ajouter'], start:['Start game','Commencer la partie'],
   rules:[`<li>Single 1 = 100, single 5 = 50. Three of a kind = face × 100 (three 1s = 1 000), each extra die doubles it.</li>
       <li>Straight of five = 500, straight of six = 1 000, three pairs = 500.</li>
       <li>Hand full (every die scores): you must throw again.</li>
@@ -337,6 +357,9 @@ if (!S){
   try { const old = JSON.parse(localStorage.getItem('dixmille-v1')); if (old && old.names) S.names = old.names; } catch(e) {}
 }
 if (!S.log) S.log = [];
+const DEFAULT_RULES = {entry:500, s5:500, s6:1000};
+S.rules = Object.assign({}, DEFAULT_RULES, S.rules || {});
+const entryPts = () => S.rules.entry;
 const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch(e) {} };
 const cur = () => S.players[S.current];
 const nextName = () => S.players[(S.current + 1) % S.players.length].name;
@@ -364,7 +387,7 @@ function scoreParts(vals){ // best breakdown using ALL given dice, [] if empty, 
   let best = countsParts(vals);
   const consider = c => { if (c && total(c) > total(best)) best = c; };
   if (vals.length === 6){
-    if ([...vals].sort().join('') === '123456') consider([{label:tr('Straight of six','Suite de six'), pts:1000}]);
+    if ([...vals].sort().join('') === '123456') consider([{label:tr('Straight of six','Suite de six'), pts:S.rules.s6}]);
     const c = {}; vals.forEach(v => c[v] = (c[v] || 0) + 1);
     if (Object.values(c).every(n => n % 2 === 0)) consider([{label:tr('Three pairs','Trois paires'), pts:500}]);
   }
@@ -372,7 +395,7 @@ function scoreParts(vals){ // best breakdown using ALL given dice, [] if empty, 
     for (const run of [[1,2,3,4,5],[2,3,4,5,6]]){
       const rest = removeRun(vals, run); if (!rest) continue;
       const rp = rest.length ? countsParts(rest) : [];
-      if (rp) consider([{label:tr('Straight of five','Suite de cinq'), pts:500}, ...rp]);
+      if (rp) consider([{label:tr('Straight of five','Suite de cinq'), pts:S.rules.s5}, ...rp]);
     }
   }
   return best;
@@ -458,7 +481,7 @@ function bankable(){
   return -1;
 }
 const fullHand = () => { const t = S.turn; return !!t.mustThrow || (t.phase === 'decide' && scoreVals(t.throw) > 0); };
-const canBank = () => { const p = bankable(); return p > 0 && !fullHand() && (cur().inGame || p >= ENTRY); };
+const canBank = () => { const p = bankable(); return p > 0 && !fullHand() && (cur().inGame || p >= entryPts()); };
 function pushHistory(){
   S.history.push(JSON.stringify({players:S.players, current:S.current, logLen:S.log.length}));
   if (S.history.length > 40) S.history.shift();
@@ -519,6 +542,7 @@ function render(){
   $('game').classList.toggle('hidden', !S.started);
   $('bar').classList.toggle('hidden', !S.started);
   document.querySelectorAll('.gameonly').forEach(el => el.classList.toggle('hidden', !S.started));
+  renderRules();
   if (!S.started){ renderSetup(); return; }
   renderBoard();
   if (S.winner){ renderWin(); return; }
@@ -572,8 +596,8 @@ function render(){
   const railItems = [];
   if (t.inherited) railItems.push(`<span class="inh">${tr('From', 'Repris à')} ${esc(t.from)} +${fmt(t.inherited)}</span>`);
   t.log.forEach(g => railItems.push(`<span class="grp">${g.dice.map(v => dieHTML(v, 'mini')).join('')}<em>+${fmt(g.pts)}</em></span>`));
-  const subline = tr(`${fmt(p.score)} banked${p.inGame ? '' : `, needs ${fmt(ENTRY)} this turn to enter`}`,
-                     `${fmt(p.score)} marqués${p.inGame ? '' : `, il faut ${fmt(ENTRY)} ce tour pour entrer`}`);
+  const subline = tr(`${fmt(p.score)} banked${p.inGame ? '' : `, needs ${fmt(entryPts())} this turn to enter`}`,
+                     `${fmt(p.score)} marqués${p.inGame ? '' : `, il faut ${fmt(entryPts())} ce tour pour entrer`}`);
   let note = '';
   if (Array.isArray(t.note)) note = tr(`${t.note[0]} ${dd(t.note[0])} read, ${t.note[1]} expected. Use “Fix it” if that’s wrong.`,
                                        `${t.note[0]} ${dd(t.note[0])} lu${t.note[0] > 1 ? 's' : ''}, ${t.note[1]} attendu${t.note[1] > 1 ? 's' : ''}. Touchez «\u202FCorriger\u202F» si c’est faux.`);
@@ -596,7 +620,7 @@ function stopButton(){
   const p = cur(), b = bankable(), sum = p.score + Math.max(0, b);
   let label = tr('Stop', 'Stop'), small = tr(`bank +${fmt(Math.max(0, b))}`, `marquer +${fmt(Math.max(0, b))}`);
   if (fullHand()) small = tr('hand full, throw again', 'main pleine, relancez');
-  else if (b > 0 && !p.inGame && b < ENTRY) small = tr(`needs ${fmt(ENTRY)} to enter`, `il faut ${fmt(ENTRY)} pour entrer`);
+  else if (b > 0 && !p.inGame && b < entryPts()) small = tr(`needs ${fmt(entryPts())} to enter`, `il faut ${fmt(entryPts())} pour entrer`);
   else if (b > 0 && sum > TARGET) small = tr('over 10\u202F000, scores nothing', 'dépasse 10\u202F000, rien n’est compté');
   else if (b > 0 && sum === TARGET){ label = tr('Stop and win', 'Stop et victoire'); small = tr('exactly 10\u202F000', '10\u202F000 pile'); }
   return `<button class="primary" data-act="bank" ${canBank() ? '' : 'disabled'}>${label}<small>${small}</small></button>`;
@@ -637,6 +661,15 @@ function renderBoard(){
       <div class="bar"><b style="width:${Math.max(0, Math.min(100, p.score / TARGET * 100))}%"></b></div>
     </li>`).join('');
 }
+function renderRules(){
+  document.querySelectorAll('.seg').forEach(g => g.querySelectorAll('button').forEach(b =>
+    b.classList.toggle('on', +b.dataset.v === S.rules[g.dataset.rule])));
+}
+document.addEventListener('click', e => {
+  const b = e.target.closest('.seg button'); if (!b) return;
+  S.rules[b.closest('.seg').dataset.rule] = +b.dataset.v;
+  save(); renderRules(); render();
+});
 function renderSetup(){
   $('plist').innerHTML = S.names.map((n, i) => `<li>${esc(n)}<span class="obtns">
       <button class="mv" data-up="${i}" ${i ? '' : 'disabled'} aria-label="${tr('Move up', 'Monter')}: ${esc(n)}">↑</button>
